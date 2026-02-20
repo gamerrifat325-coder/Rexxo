@@ -11,7 +11,6 @@ body{
   background:#0f0f0f;
   color:white;
 }
-
 header{
   background:black;
   padding:15px;
@@ -20,24 +19,20 @@ header{
   text-align:center;
   border-bottom:1px solid #222;
 }
-
 .container{
   padding:10px;
   margin-bottom:70px;
 }
-
 .video-card{
   background:#181818;
   padding:10px;
   border-radius:8px;
   margin-bottom:15px;
 }
-
 video{
   width:100%;
   border-radius:8px;
 }
-
 button{
   padding:8px 12px;
   border:none;
@@ -46,11 +41,9 @@ button{
   margin-right:5px;
   font-weight:bold;
 }
-
 .like{background:#2563eb;color:white;}
 .delete{background:red;color:white;}
 .upload-btn{background:#22c55e;color:white;width:100%;}
-
 .bottom-nav{
   position:fixed;
   bottom:0;
@@ -61,15 +54,12 @@ button{
   padding:10px 0;
   border-top:1px solid #222;
 }
-
 .bottom-nav button{
   background:none;
   color:white;
   font-size:16px;
 }
-
 .hidden{display:none;}
-
 input{
   padding:10px;
   width:95%;
@@ -86,12 +76,10 @@ input{
 
 <div class="container">
 
-<!-- HOME -->
 <div id="homePage">
   <div id="videoList"></div>
 </div>
 
-<!-- UPLOAD -->
 <div id="uploadPage" class="hidden">
   <h3>Upload Video</h3>
   <input type="text" id="videoTitle" placeholder="Enter Video Title">
@@ -101,7 +89,6 @@ input{
 
 </div>
 
-<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button onclick="showHome()">🏠 Home</button>
   <button onclick="showUpload()">➕ Upload</button>
@@ -128,7 +115,7 @@ function renderVideos(){
     list.innerHTML += `
       <div class="video-card">
         <h4>${video.title}</h4>
-        <video controls src="${video.url}"></video><br>
+        <video controls src="${video.data}"></video><br>
         <button class="like" onclick="likeVideo(${index})">
           👍 ${video.likes}
         </button>
@@ -149,17 +136,19 @@ function uploadVideo(){
     return;
   }
 
-  let url = URL.createObjectURL(file);
+  let reader = new FileReader();
+  reader.onload = function(e){
+    videos.push({
+      title:title,
+      data:e.target.result,
+      likes:0
+    });
+    saveData();
+    renderVideos();
+    showHome();
+  };
 
-  videos.push({
-    title:title,
-    url:url,
-    likes:0
-  });
-
-  saveData();
-  renderVideos();
-  showHome();
+  reader.readAsDataURL(file);
 
   document.getElementById("videoTitle").value="";
   document.getElementById("videoFile").value="";
