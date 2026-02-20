@@ -29,8 +29,9 @@ header{
   border-radius:8px;
   margin-bottom:15px;
 }
-video{
+iframe{
   width:100%;
+  height:200px;
   border-radius:8px;
 }
 button{
@@ -81,17 +82,17 @@ input{
 </div>
 
 <div id="uploadPage" class="hidden">
-  <h3>Upload Video</h3>
+  <h3>Add YouTube Video</h3>
   <input type="text" id="videoTitle" placeholder="Enter Video Title">
-  <input type="file" id="videoFile" accept="video/*">
-  <button class="upload-btn" onclick="uploadVideo()">Upload</button>
+  <input type="text" id="videoLink" placeholder="Paste YouTube Link">
+  <button class="upload-btn" onclick="addVideo()">Add Video</button>
 </div>
 
 </div>
 
 <div class="bottom-nav">
   <button onclick="showHome()">🏠 Home</button>
-  <button onclick="showUpload()">➕ Upload</button>
+  <button onclick="showUpload()">➕ Add</button>
 </div>
 
 <script>
@@ -102,12 +103,18 @@ function saveData(){
   localStorage.setItem("videos", JSON.stringify(videos));
 }
 
+function extractVideoID(url){
+  let regExp = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/;
+  let match = url.match(regExp);
+  return match ? match[1] : null;
+}
+
 function renderVideos(){
   let list = document.getElementById("videoList");
   list.innerHTML="";
 
   if(videos.length===0){
-    list.innerHTML="<p>No videos uploaded yet.</p>";
+    list.innerHTML="<p>No videos added yet.</p>";
     return;
   }
 
@@ -115,7 +122,8 @@ function renderVideos(){
     list.innerHTML += `
       <div class="video-card">
         <h4>${video.title}</h4>
-        <video controls src="${video.data}"></video><br>
+        <iframe src="https://www.youtube.com/embed/${video.id}" 
+        frameborder="0" allowfullscreen></iframe><br>
         <button class="like" onclick="likeVideo(${index})">
           👍 ${video.likes}
         </button>
@@ -127,31 +135,29 @@ function renderVideos(){
   });
 }
 
-function uploadVideo(){
+function addVideo(){
   let title = document.getElementById("videoTitle").value;
-  let file = document.getElementById("videoFile").files[0];
+  let link = document.getElementById("videoLink").value;
 
-  if(!title || !file){
-    alert("Enter title and select video");
+  let id = extractVideoID(link);
+
+  if(!title || !id){
+    alert("Enter valid title and YouTube link");
     return;
   }
 
-  let reader = new FileReader();
-  reader.onload = function(e){
-    videos.push({
-      title:title,
-      data:e.target.result,
-      likes:0
-    });
-    saveData();
-    renderVideos();
-    showHome();
-  };
+  videos.push({
+    title:title,
+    id:id,
+    likes:0
+  });
 
-  reader.readAsDataURL(file);
+  saveData();
+  renderVideos();
+  showHome();
 
   document.getElementById("videoTitle").value="";
-  document.getElementById("videoFile").value="";
+  document.getElementById("videoLink").value="";
 }
 
 function likeVideo(index){
