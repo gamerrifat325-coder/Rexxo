@@ -1,125 +1,195 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rexxo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f9f9f9;
-    }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RexxoTube</title>
 
-    header {
-      background-color: #ff0000;
-      color: white;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f0f0f;
+  color:white;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+header{
+  background:black;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  border-bottom:1px solid #222;
+}
 
-    header input {
-      padding: 5px;
-      width: 200px;
-    }
+.container{
+  padding:10px;
+  margin-bottom:70px;
+}
 
-    main {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 20px;
-      gap: 20px;
-      justify-content: center;
-    }
+.video-card{
+  background:#181818;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:15px;
+}
 
-    .video-card {
-      background-color: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      width: 300px;
-      cursor: pointer;
-      overflow: hidden;
-    }
+video{
+  width:100%;
+  border-radius:8px;
+}
 
-    .video-card img {
-      width: 100%;
-      height: auto;
-    }
+button{
+  padding:8px 12px;
+  border:none;
+  border-radius:5px;
+  margin-top:5px;
+  margin-right:5px;
+  font-weight:bold;
+}
 
-    .video-card h3 {
-      margin: 10px;
-      font-size: 18px;
-    }
+.like{background:#2563eb;color:white;}
+.delete{background:red;color:white;}
+.upload-btn{background:#22c55e;color:white;width:100%;}
 
-    .video-card p {
-      margin: 0 10px 10px;
-      color: gray;
-      font-size: 14px;
-    }
-  </style>
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:black;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #222;
+}
+
+.bottom-nav button{
+  background:none;
+  color:white;
+  font-size:16px;
+}
+
+.hidden{display:none;}
+
+input{
+  padding:10px;
+  width:95%;
+  margin-bottom:10px;
+  border-radius:5px;
+  border:none;
+}
+</style>
 </head>
+
 <body>
 
-  <header>
-    <h1>Rexxo</h1>
-    <input type="text" id="search" placeholder="Search videos...">
-  </header>
+<header>🔥 RexxoTube</header>
 
-  <main id="video-list">
-    <!-- Videos will appear here -->
-  </main>
+<div class="container">
 
-  <script>
-    const videos = [
-      {
-        title: "Rexxo Gameplay #1",
-        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_1/hqdefault.jpg",
-        views: "1M views"
-      },
-      {
-        title: "Rexxo Gameplay #2",
-        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_2/hqdefault.jpg",
-        views: "500K views"
-      },
-      {
-        title: "Rexxo Tutorial",
-        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_3/hqdefault.jpg",
-        views: "250K views"
-      }
-    ];
+<!-- HOME -->
+<div id="homePage">
+  <div id="videoList"></div>
+</div>
 
-    const videoList = document.getElementById("video-list");
+<!-- UPLOAD -->
+<div id="uploadPage" class="hidden">
+  <h3>Upload Video</h3>
+  <input type="text" id="videoTitle" placeholder="Enter Video Title">
+  <input type="file" id="videoFile" accept="video/*">
+  <button class="upload-btn" onclick="uploadVideo()">Upload</button>
+</div>
 
-    function showVideos(list) {
-      videoList.innerHTML = "";
-      list.forEach(video => {
-        const card = document.createElement("div");
-        card.className = "video-card";
-        card.innerHTML = `
-          <img src="${video.thumbnail}" alt="${video.title}">
-          <h3>${video.title}</h3>
-          <p>${video.views}</p>
-        `;
-        card.onclick = () => alert("Playing: " + video.title);
-        videoList.appendChild(card);
-      });
-    }
+</div>
 
-    showVideos(videos);
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button onclick="showHome()">🏠 Home</button>
+  <button onclick="showUpload()">➕ Upload</button>
+</div>
 
-    // Search functionality
-    document.getElementById("search").addEventListener("input", (e) => {
-      const query = e.target.value.toLowerCase();
-      const filtered = videos.filter(v => v.title.toLowerCase().includes(query));
-      showVideos(filtered);
-    });
-  </script>
+<script>
+
+let videos = JSON.parse(localStorage.getItem("videos")) || [];
+
+function saveData(){
+  localStorage.setItem("videos", JSON.stringify(videos));
+}
+
+function renderVideos(){
+  let list = document.getElementById("videoList");
+  list.innerHTML="";
+
+  if(videos.length===0){
+    list.innerHTML="<p>No videos uploaded yet.</p>";
+    return;
+  }
+
+  videos.forEach((video,index)=>{
+    list.innerHTML += `
+      <div class="video-card">
+        <h4>${video.title}</h4>
+        <video controls src="${video.url}"></video><br>
+        <button class="like" onclick="likeVideo(${index})">
+          👍 ${video.likes}
+        </button>
+        <button class="delete" onclick="deleteVideo(${index})">
+          🗑 Delete
+        </button>
+      </div>
+    `;
+  });
+}
+
+function uploadVideo(){
+  let title = document.getElementById("videoTitle").value;
+  let file = document.getElementById("videoFile").files[0];
+
+  if(!title || !file){
+    alert("Enter title and select video");
+    return;
+  }
+
+  let url = URL.createObjectURL(file);
+
+  videos.push({
+    title:title,
+    url:url,
+    likes:0
+  });
+
+  saveData();
+  renderVideos();
+  showHome();
+
+  document.getElementById("videoTitle").value="";
+  document.getElementById("videoFile").value="";
+}
+
+function likeVideo(index){
+  videos[index].likes++;
+  saveData();
+  renderVideos();
+}
+
+function deleteVideo(index){
+  videos.splice(index,1);
+  saveData();
+  renderVideos();
+}
+
+function showHome(){
+  document.getElementById("homePage").classList.remove("hidden");
+  document.getElementById("uploadPage").classList.add("hidden");
+}
+
+function showUpload(){
+  document.getElementById("homePage").classList.add("hidden");
+  document.getElementById("uploadPage").classList.remove("hidden");
+}
+
+renderVideos();
+
+</script>
 
 </body>
 </html>
