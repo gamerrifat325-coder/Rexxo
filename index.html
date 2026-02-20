@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rexxo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+
+    header {
+      background-color: #ff0000;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header input {
+      padding: 5px;
+      width: 200px;
+    }
+
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .video-card {
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      width: 300px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .video-card img {
+      width: 100%;
+      height: auto;
+    }
+
+    .video-card h3 {
+      margin: 10px;
+      font-size: 18px;
+    }
+
+    .video-card p {
+      margin: 0 10px 10px;
+      color: gray;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Rexxo</h1>
+    <input type="text" id="search" placeholder="Search videos...">
+  </header>
+
+  <main id="video-list">
+    <!-- Videos will appear here -->
+  </main>
+
+  <script>
+    const videos = [
+      {
+        title: "Rexxo Gameplay #1",
+        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_1/hqdefault.jpg",
+        views: "1M views"
+      },
+      {
+        title: "Rexxo Gameplay #2",
+        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_2/hqdefault.jpg",
+        views: "500K views"
+      },
+      {
+        title: "Rexxo Tutorial",
+        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_3/hqdefault.jpg",
+        views: "250K views"
+      }
+    ];
+
+    const videoList = document.getElementById("video-list");
+
+    function showVideos(list) {
+      videoList.innerHTML = "";
+      list.forEach(video => {
+        const card = document.createElement("div");
+        card.className = "video-card";
+        card.innerHTML = `
+          <img src="${video.thumbnail}" alt="${video.title}">
+          <h3>${video.title}</h3>
+          <p>${video.views}</p>
+        `;
+        card.onclick = () => alert("Playing: " + video.title);
+        videoList.appendChild(card);
+      });
+    }
+
+    showVideos(videos);
+
+    // Search functionality
+    document.getElementById("search").addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase();
+      const filtered = videos.filter(v => v.title.toLowerCase().includes(query));
+      showVideos(filtered);
+    });
+  </script>
+
+</body>
+</html>
