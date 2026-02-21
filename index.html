@@ -1,91 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
-<title>RexxoTube</title>
-
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#0f0f0f;color:white;}
-header{background:black;padding:15px;font-size:22px;font-weight:bold;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center;}
-header button{padding:5px 10px;border:none;border-radius:5px;background:#22c55e;color:white;cursor:pointer;}
-.container{padding:10px;margin-bottom:70px;}
-input{padding:10px;width:95%;margin-bottom:10px;border-radius:5px;border:none;}
-button{padding:5px 10px;margin-right:5px;border:none;border-radius:5px;font-weight:bold;cursor:pointer;}
-.hidden{display:none;}
-.video-card{background:#181818;padding:10px;border-radius:8px;margin-bottom:15px;}
-iframe{width:100%;border-radius:8px;}
-.bottom-nav{position:fixed;bottom:0;width:100%;background:black;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222;}
-.bottom-nav button{background:none;color:white;font-size:16px;border:none;cursor:pointer;}
-.profile-container{display:flex;align-items:center;margin-bottom:10px;}
-.profile-pic{width:50px;height:50px;border-radius:50%;background:#555;display:flex;justify-content:center;align-items:center;color:#ccc;font-weight:bold;font-size:20px;}
-.profile-btn{background:#f59e0b;color:white;}
-.info-btn{background:#2563eb;color:white;border-radius:50%;width:20px;height:20px;padding:0;cursor:pointer;margin-left:5px;}
-.package-box{background:#181818;padding:15px;border-radius:8px;cursor:pointer;margin-top:10px;}
-</style>
-</head>
-<body>
-
-<header>
-<span>🔥 RexxoTube</span>
-<button onclick="goPremium()">Go Premium</button>
-</header>
-
-<div class="container">
-
-<!-- Home -->
-<div id="homeTab">
-<input type="text" id="searchInput" placeholder="Search videos..." onkeyup="searchVideos()">
-<div id="videoList"></div>
-</div>
-
-<!-- Create -->
-<div id="createTab" class="hidden">
-<h3>Add YouTube Video</h3>
-<input type="text" id="videoTitle" placeholder="Enter Video Title">
-<input type="text" id="videoLink" placeholder="Paste YouTube Link">
-<button onclick="uploadCheck()">Add Video</button>
-</div>
-
-<!-- Subscription (Premium) -->
-<div id="subscriptionTab" class="hidden">
-<h2>Premium Plan</h2>
-
-<div class="package-box" onclick="showRedeem()">
-₹200 Premium Package 
-<button class="info-btn" onclick="showInfo(event)">?</button>
-</div>
-
-<div id="redeemSection" class="hidden">
-<input type="text" id="redeemCode" placeholder="Enter Redeem Code">
-<button onclick="submitRedeem()">Submit</button>
-</div>
-
-</div>
-
-<!-- Profile -->
-<div id="meTab" class="hidden">
-<h2>Profile</h2>
-<div class="profile-container">
-<div id="profilePic" class="profile-pic"></div>
-<div>
-<span id="profileName"></span>
-</div>
-</div>
-<button class="profile-btn" onclick="editName()">Edit Name</button>
-</div>
-
-</div>
-
-<div class="bottom-nav">
-<button onclick="switchTab('homeTab')">Home</button>
-<button onclick="switchTab('createTab')">Create</button>
-<button onclick="switchTab('subscriptionTab')">Subscription</button>
-<button onclick="switchTab('meTab')">Me</button>
-</div>
-
 <script>
+
+window.onload=function(){
 
 let user={
 name:localStorage.getItem("userName")||"",
@@ -93,7 +8,6 @@ dob:localStorage.getItem("userDOB")||"",
 premium:localStorage.getItem("userPremium")==="true"
 };
 
-// First time prompt
 if(!user.name){
 user.name=prompt("Enter your Name:")||"Guest";
 user.dob=prompt("Enter your Birth Date (DD/MM/YYYY):")||"";
@@ -101,102 +15,189 @@ localStorage.setItem("userName",user.name);
 localStorage.setItem("userDOB",user.dob);
 }
 
-// Profile display
-function updateProfileDisplay(){
-document.getElementById("profilePic").innerText=user.name.charAt(0).toUpperCase();
-document.getElementById("profileName").innerText=user.name;
-}
-updateProfileDisplay();
+let searchHistory=[];
+let watchedCount=0;
+let halfWatchedCount=0;
 
-// Edit name
-function editName(){
-let newName=prompt("Enter new Name:",user.name);
-if(newName){
-user.name=newName;
-localStorage.setItem("userName",newName);
-updateProfileDisplay();
-}
-}
-
-// Tab switch
-function switchTab(tabId){
-['homeTab','createTab','subscriptionTab','meTab'].forEach(t=>document.getElementById(t).classList.add('hidden'));
-document.getElementById(tabId).classList.remove('hidden');
-}
-
-// Go Premium
-function goPremium(){
-switchTab('subscriptionTab');
-}
-
-// Info
-function showInfo(event){
-event.stopPropagation();
-alert("If you buy ₹200 Premium, Shorts and Bio features will be unlocked for you.");
-}
-
-// Show redeem
-function showRedeem(){
-document.getElementById("redeemSection").classList.remove("hidden");
-}
-
-// Submit redeem → WhatsApp only
-function submitRedeem(){
-let code=document.getElementById("redeemCode").value;
-if(!code){alert("Enter Redeem Code");return;}
-
-let phone="919607903090";
-let message=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);
-window.open("https://wa.me/"+phone+"?text="+message,"_blank");
-
-alert("Redeem request sent to Admin. Wait for approval.");
-}
-
-// Sample videos
 let videos=[
-{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0},
-{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0}
+{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0,uploader:"Admin",time:"3 hours ago"},
+{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0,uploader:"Admin",time:"1 day ago"}
 ];
 
-function renderVideos(list=videos){
-let container=document.getElementById("videoList");
-container.innerHTML="";
-list.forEach((v,i)=>{
-container.innerHTML+=`
-<div class="video-card">
-<h4>${v.title}</h4>
-<iframe src="https://www.youtube.com/embed/${v.id}" frameborder="0" allowfullscreen></iframe>
-<br>
-<button onclick="likeVideo(${i})">👍 ${v.likes}</button>
-<button onclick="deleteVideo(${i})">🗑 Delete</button>
-</div>`;
-});
+function updateProfileDisplay(){
+let pic=document.getElementById("profilePic");
+let name=document.getElementById("profileName");
+if(pic && name){
+pic.innerText=user.name.charAt(0).toUpperCase();
+name.innerText=user.name;
 }
+}
+updateProfileDisplay();
 
-function likeVideo(i){videos[i].likes++;renderVideos();}
-function deleteVideo(i){videos.splice(i,1);renderVideos();}
+window.switchTab=function(tabId){
+["homeTab","createTab","subscriptionTab","meTab"].forEach(t=>{
+let el=document.getElementById(t);
+if(el) el.classList.add("hidden");
+});
+document.getElementById(tabId).classList.remove("hidden");
 
-function uploadCheck(){
+if(tabId==="meTab") renderYourVideos();
+};
+
+window.goPremium=function(){ switchTab("subscriptionTab"); };
+
+window.showInfo=function(e){
+e.stopPropagation();
+alert("If you buy ₹200 Premium, Shorts and Bio features will be unlocked.");
+};
+
+window.showRedeem=function(){
+document.getElementById("redeemSection").classList.remove("hidden");
+};
+
+window.submitRedeem=function(){
+let code=document.getElementById("redeemCode").value;
+if(!code){alert("Enter Redeem Code");return;}
+let phone="919607903090";
+let message=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);
+window.location.href="https://api.whatsapp.com/send?phone="+phone+"&text="+message;
+};
+
+window.likeVideo=function(i){
+videos[i].likes++;
+renderVideos();
+};
+
+window.deleteVideo=function(i){
+videos.splice(i,1);
+renderVideos();
+};
+
+window.reportVideo=function(){
+alert("Video reported.");
+};
+
+window.blockUser=function(name){
+alert(name+" blocked.");
+};
+
+window.uploadCheck=function(){
 if(!user.premium){alert("Premium Only");return;}
 addVideo();
-}
+};
 
 function addVideo(){
 let title=document.getElementById("videoTitle").value;
 let link=document.getElementById("videoLink").value;
 let id=link.split("v=")[1]||link.split("youtu.be/")[1];
 if(!title||!id){alert("Enter valid title & URL");return;}
-videos.push({title,id,likes:0});
+
+videos.push({
+title:title,
+id:id,
+likes:0,
+uploader:user.name,
+time:"Just now"
+});
 renderVideos();
 }
 
-function searchVideos(){
+window.searchVideos=function(){
 let term=document.getElementById("searchInput").value.toLowerCase();
-renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));
+if(term) searchHistory.push(term);
+let filtered=videos.filter(v=>v.title.toLowerCase().includes(term));
+renderVideos(filtered);
+};
+
+function trackWatch(){
+watchedCount++;
+setTimeout(()=>{halfWatchedCount++;},3000);
 }
 
+function renderVideos(list=videos){
+let container=document.getElementById("videoList");
+container.innerHTML="";
+
+list.forEach((v,i)=>{
+let owner=v.uploader===user.name;
+
+container.innerHTML+=`
+<div class="video-card">
+<h4>${v.title}</h4>
+
+<iframe src="https://www.youtube.com/embed/${v.id}" 
+onload="trackWatch()" frameborder="0" allowfullscreen></iframe>
+
+<div style="display:flex;align-items:center;margin-top:8px;">
+<div class="profile-pic">${v.uploader.charAt(0).toUpperCase()}</div>
+<div style="margin-left:8px;">
+<div>${v.uploader}</div>
+<small>${v.time}</small>
+</div>
+</div>
+
+<br>
+<button onclick="likeVideo(${i})">👍 ${v.likes}</button>
+${owner 
+? `<button onclick="deleteVideo(${i})">Delete</button>` 
+: `<button onclick="reportVideo()">Report</button>
+<button onclick="blockUser('${v.uploader}')">Block</button>`}
+</div>`;
+});
+}
+
+function renderYourVideos(){
+let box="<h3>Your Videos</h3>";
+let yourVideos=videos.filter(v=>v.uploader===user.name);
+
+yourVideos.forEach((v,i)=>{
+box+=`
+<div class="video-card">
+<h4>${v.title}</h4>
+<button onclick="editVideo(${i})">Edit</button>
+<button onclick="deleteVideo(${i})">Delete</button>
+</div>`;
+});
+
+box+=`
+<h3>History</h3>
+<p>Search: ${searchHistory.join(", ")||"None"}</p>
+<p>Watched: ${watchedCount}</p>
+<p>Half Watched: ${halfWatchedCount}</p>
+`;
+
+document.getElementById("meTab").innerHTML=
+`
+<h2>Profile</h2>
+<div class="profile-container">
+<div class="profile-pic">${user.name.charAt(0).toUpperCase()}</div>
+<div><span>${user.name}</span></div>
+</div>
+<button class="profile-btn" onclick="editName()">Edit Name</button>
+` + box;
+}
+
+window.editVideo=function(i){
+let newTitle=prompt("Edit Title:",videos[i].title);
+if(newTitle){
+videos[i].title=newTitle;
 renderVideos();
+renderYourVideos();
+}
+};
+
+window.editName=function(){
+let newName=prompt("Enter new Name:",user.name);
+if(newName){
+user.name=newName;
+localStorage.setItem("userName",newName);
+updateProfileDisplay();
+renderVideos();
+}
+};
+
+renderVideos();
+
+};
 
 </script>
-</body>
-</html>
