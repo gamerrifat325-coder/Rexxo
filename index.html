@@ -1,164 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
+<title>RexxoTube</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0f0f0f;color:white;}
+header{background:black;padding:12px;display:flex;justify-content:space-between;align-items:center;}
+header input{padding:6px;border-radius:5px;border:none;width:60%;}
+header button{background:#22c55e;border:none;padding:6px 10px;border-radius:5px;color:white;}
+
+.container{padding:10px;margin-bottom:70px;}
+.hidden{display:none;}
+
+.video-card{background:#181818;padding:10px;border-radius:8px;margin-bottom:15px;}
+iframe{width:100%;border-radius:8px;}
+
+.profile-mini{
+width:30px;height:30px;border-radius:50%;
+background:#555;display:flex;align-items:center;justify-content:center;
+margin-right:8px;font-size:14px;
+}
+
+.bottom-nav{
+position:fixed;bottom:0;width:100%;
+background:black;display:flex;justify-content:space-around;
+padding:10px 0;border-top:1px solid #222;
+}
+.bottom-nav button{background:none;color:white;border:none;}
+
+.package{background:#181818;padding:15px;border-radius:8px;margin-top:10px;cursor:pointer;}
+.info-btn{background:#2563eb;border:none;border-radius:50%;width:20px;height:20px;color:white;margin-left:5px;}
+
+.menu-btn{background:none;border:none;color:white;font-size:18px;}
+</style>
+</head>
+
+<body>
+
+<header>
+<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchVideos()">
+<button onclick="switchTab('premiumTab')">Premium</button>
+</header>
+
+<div class="container">
+
+<!-- HOME -->
+<div id="homeTab">
+<div id="videoList"></div>
+</div>
+
+<!-- CREATE -->
+<div id="createTab" class="hidden">
+<h3>Add Video</h3>
+<input type="text" id="videoTitle" placeholder="Title"><br><br>
+<input type="text" id="videoLink" placeholder="YouTube Link"><br><br>
+<button onclick="uploadCheck()">Upload</button>
+</div>
+
+<!-- PREMIUM -->
+<div id="premiumTab" class="hidden">
+<h2>Premium</h2>
+
+<div class="package" onclick="showRedeem()">
+₹50 Package
+<button class="info-btn" onclick="showInfo(event)">?</button>
+</div>
+
+<div id="redeemBox" class="hidden">
+<br>
+<input type="text" id="redeemCode" placeholder="Enter Redeem Code">
+<button onclick="submitRedeem()">Submit</button>
+</div>
+</div>
+
+<!-- ME -->
+<div id="meTab" class="hidden">
+<h3>Your Videos</h3>
+<div id="yourVideos"></div>
+
+<h3>History</h3>
+<div id="historyData"></div>
+</div>
+
+</div>
+
+<div class="bottom-nav">
+<button onclick="switchTab('homeTab')">Home</button>
+<button onclick="switchTab('createTab')">Create</button>
+<button onclick="switchTab('meTab')">Me</button>
+</div>
+
 <script>
 
-let user={
-name:localStorage.getItem("userName")||"",
-dob:localStorage.getItem("userDOB")||"",
-premium:localStorage.getItem("userPremium")==="true",
-blocked:[]
-};
+let userName=localStorage.getItem("userName")||prompt("Enter Name")||"Guest";
+localStorage.setItem("userName",userName);
 
-if(!user.name){
-user.name=prompt("Enter your Name:")||"Guest";
-user.dob=prompt("Enter your Birth Date (DD/MM/YYYY):")||"";
-localStorage.setItem("userName",user.name);
-localStorage.setItem("userDOB",user.dob);
-}
-
-let searchHistory=JSON.parse(localStorage.getItem("searchHistory")||"[]");
+let searchHistory=[];
 let watchCount=0;
-let halfWatchCount=0;
-
-function updateProfileDisplay(){
-document.getElementById("profilePic").innerText=user.name.charAt(0).toUpperCase();
-document.getElementById("profileName").innerText=user.name;
-}
-updateProfileDisplay();
-
-function editName(){
-let newName=prompt("Enter new Name:",user.name);
-if(newName){
-user.name=newName;
-localStorage.setItem("userName",newName);
-updateProfileDisplay();
-renderVideos();
-}
-}
-
-function switchTab(tabId){
-['homeTab','createTab','subscriptionTab','meTab'].forEach(t=>document.getElementById(t).classList.add('hidden'));
-document.getElementById(tabId).classList.remove('hidden');
-if(tabId==="meTab") renderYourVideos();
-}
-
-function goPremium(){switchTab('subscriptionTab');}
-
-function showInfo(event){
-event.stopPropagation();
-alert("If you buy ₹200 Premium, Shorts and Bio features will be unlocked for you.");
-}
-
-function showRedeem(){
-document.getElementById("redeemSection").classList.remove("hidden");
-}
-
-function submitRedeem(){
-let code=document.getElementById("redeemCode").value;
-if(!code){alert("Enter Redeem Code");return;}
-let phone="919607903090";
-let message=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);
-window.open("https://wa.me/"+phone+"?text="+message,"_blank");
-alert("Redeem request sent to Admin.");
-}
+let halfWatch=0;
 
 let videos=[
-{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0,owner:"Admin",time:Date.now()},
-{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0,owner:"Admin",time:Date.now()}
+{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",owner:"Admin",time:Date.now()},
+{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",owner:"Admin",time:Date.now()}
 ];
 
-function timeAgo(time){
-let diff=Math.floor((Date.now()-time)/3600000);
-return diff<=1?"Just now":diff+" hours ago";
+function timeAgo(t){
+let h=Math.floor((Date.now()-t)/3600000);
+return h<=1?"Just now":h+" hours ago";
 }
 
 function renderVideos(list=videos){
-let container=document.getElementById("videoList");
-container.innerHTML="";
+let box=document.getElementById("videoList");
+box.innerHTML="";
 list.forEach((v,i)=>{
-if(user.blocked.includes(v.owner)) return;
-
-let ownerControls="";
-if(v.owner===user.name){
-ownerControls=`<button onclick="deleteVideo(${i})">🗑 Delete</button>`;
+let controls="";
+if(v.owner===userName){
+controls=`<button onclick="deleteVideo(${i})">Delete</button>`;
 }else{
-ownerControls=`<button onclick="reportVideo()">🚩 Report</button>
-<button onclick="blockUser('${v.owner}')">🚫 Block</button>`;
+controls=`<button onclick="reportVideo()">Report</button>
+<button onclick="blockUser('${v.owner}')">Block</button>`;
 }
 
-container.innerHTML+=`
+box.innerHTML+=`
 <div class="video-card">
+<div style="display:flex;justify-content:space-between;">
 <h4>${v.title}</h4>
+${controls}
+</div>
+
 <iframe src="https://www.youtube.com/embed/${v.id}" allowfullscreen 
-onplay="watchCount++"></iframe>
-<br>
+onclick="watchCount++"></iframe>
+
 <div style="display:flex;align-items:center;margin-top:5px;">
-<div style="width:30px;height:30px;border-radius:50%;background:#555;
-display:flex;align-items:center;justify-content:center;">
-${v.owner.charAt(0).toUpperCase()}
+<div class="profile-mini">${v.owner.charAt(0).toUpperCase()}</div>
+<span>${v.owner} • ${timeAgo(v.time)}</span>
 </div>
-<span style="margin-left:8px;">${v.owner} • ${timeAgo(v.time)}</span>
-</div>
-<br>
-<button onclick="likeVideo(${i})">👍 ${v.likes}</button>
-${ownerControls}
 </div>`;
 });
 }
 
-function likeVideo(i){videos[i].likes++;renderVideos();}
 function deleteVideo(i){videos.splice(i,1);renderVideos();}
 
-function reportVideo(){alert("Video Reported");}
-function blockUser(owner){
-user.blocked.push(owner);
-alert(owner+" Blocked");
-renderVideos();
-}
+function reportVideo(){alert("Reported");}
+function blockUser(name){alert(name+" Blocked");}
 
-function uploadCheck(){
-if(!user.premium){alert("Premium Only");return;}
-addVideo();
-}
+function uploadCheck(){addVideo();}
 
 function addVideo(){
 let title=document.getElementById("videoTitle").value;
 let link=document.getElementById("videoLink").value;
 let id=link.split("v=")[1]||link.split("youtu.be/")[1];
-if(!title||!id){alert("Enter valid title & URL");return;}
-videos.push({title,id,likes:0,owner:user.name,time:Date.now()});
+if(!title||!id)return alert("Enter valid details");
+videos.push({title,id,owner:userName,time:Date.now()});
 renderVideos();
 }
 
 function searchVideos(){
 let term=document.getElementById("searchInput").value.toLowerCase();
 if(term) searchHistory.push(term);
-localStorage.setItem("searchHistory",JSON.stringify(searchHistory));
 renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));
 }
 
-function renderYourVideos(){
-let container=document.getElementById("meTab");
-let your=videos.filter(v=>v.owner===user.name);
-let html="<h3>Your Videos</h3>";
+function switchTab(id){
+["homeTab","createTab","premiumTab","meTab"].forEach(t=>document.getElementById(t).classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+if(id==="meTab") renderMe();
+}
+
+function showInfo(e){
+e.stopPropagation();
+alert("After purchasing Premium, your Shorts and Bio features will be unlocked.");
+}
+
+function showRedeem(){
+document.getElementById("redeemBox").classList.remove("hidden");
+}
+
+function submitRedeem(){
+let code=document.getElementById("redeemCode").value;
+if(!code)return alert("Enter Code");
+let phone="919607903090";
+let msg=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+userName);
+window.open("https://wa.me/"+phone+"?text="+msg,"_blank");
+}
+
+function renderMe(){
+let your=videos.filter(v=>v.owner===userName);
+let yBox=document.getElementById("yourVideos");
+yBox.innerHTML="";
 your.forEach((v,i)=>{
-html+=`
-<div style="background:#222;padding:8px;margin-bottom:8px;">
-<b>${v.title}</b>
-<button onclick="editVideo(${i})">✏ Edit</button>
-<button onclick="deleteVideo(${i})">🗑</button>
+yBox.innerHTML+=`
+<div style="background:#222;padding:8px;margin-bottom:8px;display:flex;justify-content:space-between;">
+${v.title}
+<button class="menu-btn" onclick="editVideo(${i})">⋮</button>
 </div>`;
 });
-html+=`<h3>History</h3>
-Searches: ${searchHistory.join(", ")}<br>
-Videos Watched: ${watchCount}<br>
-Half Watched: ${halfWatchCount}`;
-container.innerHTML=html;
+
+document.getElementById("historyData").innerHTML=
+"Searches: "+searchHistory.join(", ")+"<br>"+
+"Videos Watched: "+watchCount+"<br>"+
+"Half Watched: "+halfWatch;
 }
 
 function editVideo(i){
 let newTitle=prompt("Edit Title:",videos[i].title);
-if(newTitle){videos[i].title=newTitle;renderVideos();}
+if(newTitle) videos[i].title=newTitle;
+renderVideos();
+renderMe();
 }
 
 renderVideos();
 
 </script>
+
+</body>
+</html>
