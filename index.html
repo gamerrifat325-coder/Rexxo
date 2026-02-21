@@ -1,196 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RexxoTube</title>
-
-<!-- Google Verification Tag -->
 <meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
-
+<title>RexxoTube Premium</title>
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0f0f0f;
-  color:white;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f0f0f;
+  color: white;
+  text-align: center;
 }
-header{
-  background:black;
-  padding:15px;
-  font-size:22px;
-  font-weight:bold;
-  text-align:center;
-  border-bottom:1px solid #222;
+header {
+  background: black;
+  padding: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  border-bottom: 1px solid #222;
 }
-.container{
-  padding:10px;
-  margin-bottom:70px;
+.container {
+  padding: 20px;
 }
-.video-card{
-  background:#181818;
-  padding:10px;
-  border-radius:8px;
-  margin-bottom:15px;
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-weight: bold;
+  cursor: pointer;
 }
-iframe{
-  width:100%;
-  height:200px;
-  border-radius:8px;
+input, select {
+  padding: 10px;
+  width: 80%;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: none;
 }
-button{
-  padding:8px 12px;
-  border:none;
-  border-radius:5px;
-  margin-top:5px;
-  margin-right:5px;
-  font-weight:bold;
-}
-.like{background:#2563eb;color:white;}
-.delete{background:red;color:white;}
-.upload-btn{background:#22c55e;color:white;width:100%;}
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:black;
-  display:flex;
-  justify-content:space-around;
-  padding:10px 0;
-  border-top:1px solid #222;
-}
-.bottom-nav button{
-  background:none;
-  color:white;
-  font-size:16px;
-}
-.hidden{display:none;}
-input{
-  padding:10px;
-  width:95%;
-  margin-bottom:10px;
-  border-radius:5px;
-  border:none;
+#homePage, #premiumPage, #secretPage {
+  display: none;
 }
 </style>
 </head>
-
 <body>
 
 <header>🔥 RexxoTube</header>
 
 <div class="container">
 
+<!-- Home Page -->
 <div id="homePage">
-  <div id="videoList"></div>
+  <h1>Welcome to RexxoTube 🔥</h1>
+  <button onclick="showPremium()">Go Premium</button>
 </div>
 
-<div id="uploadPage" class="hidden">
-  <h3>Add YouTube Video</h3>
-  <input type="text" id="videoTitle" placeholder="Enter Video Title">
-  <input type="text" id="videoLink" placeholder="Paste YouTube Link">
-  <button class="upload-btn" onclick="addVideo()">Add Video</button>
+<!-- Premium Page -->
+<div id="premiumPage">
+  <h2>Select Premium Plan</h2>
+  <select id="plan">
+    <option value="50">₹50 - 20 Days</option>
+    <option value="100">₹100 - 30 Days</option>
+    <option value="200">₹200 - 60 Days</option>
+  </select>
+  <br>
+  <input type="text" id="redeemCode" placeholder="Enter Redeem Code">
+  <br>
+  <button onclick="sendWhatsApp()">Submit</button>
+  <br>
+  <button onclick="showHome()">Back Home</button>
 </div>
 
+<!-- Secret Premium Page -->
+<div id="secretPage">
+  <h1>Welcome to Premium Content 🔥</h1>
+  <p>Yaha tumhara secret content hoga.</p>
+  <button onclick="showHome()">Back Home</button>
 </div>
 
-<div class="bottom-nav">
-  <button onclick="showHome()">🏠 Home</button>
-  <button onclick="showUpload()">➕ Add</button>
 </div>
 
 <script>
+// Initial page show
+document.getElementById("homePage").style.display = "block";
 
-let videos = JSON.parse(localStorage.getItem("videos")) || [];
-
-function saveData(){
-  localStorage.setItem("videos", JSON.stringify(videos));
+// Page switches
+function showHome() {
+  document.getElementById("homePage").style.display = "block";
+  document.getElementById("premiumPage").style.display = "none";
+  document.getElementById("secretPage").style.display = "none";
 }
 
-function extractVideoID(url){
-  let regExp = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/;
-  let match = url.match(regExp);
-  return match ? match[1] : null;
+function showPremium() {
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("premiumPage").style.display = "block";
+  document.getElementById("secretPage").style.display = "none";
 }
 
-function renderVideos(){
-  let list = document.getElementById("videoList");
-  list.innerHTML="";
+// WhatsApp redeem system
+function sendWhatsApp() {
+  var plan = document.getElementById("plan").value;
+  var code = document.getElementById("redeemCode").value.trim();
 
-  if(videos.length===0){
-    list.innerHTML="<p>No videos added yet.</p>";
+  if(!code) {
+    alert("Enter Redeem Code");
     return;
   }
 
-  videos.forEach((video,index)=>{
-    list.innerHTML += `
-      <div class="video-card">
-        <h4>${video.title}</h4>
-        <iframe src="https://www.youtube.com/embed/${video.id}" 
-        frameborder="0" allowfullscreen></iframe><br>
-        <button class="like" onclick="likeVideo(${index})">
-          👍 ${video.likes}
-        </button>
-        <button class="delete" onclick="deleteVideo(${index})">
-          🗑 Delete
-        </button>
-      </div>
-    `;
-  });
+  var message = "Premium Plan: ₹" + plan + "%0A Redeem Code: " + code;
+  var phone = "919607903090"; // Tumhara WhatsApp number
+
+  // Open WhatsApp
+  window.open("https://wa.me/" + phone + "?text=" + message);
+
+  // Prompt user for password after verification
+  setTimeout(() => {
+    var password = prompt("Enter Premium Password (after verification):");
+    if(password === "Rexxo123") { // Apna password
+      document.getElementById("homePage").style.display = "none";
+      document.getElementById("premiumPage").style.display = "none";
+      document.getElementById("secretPage").style.display = "block";
+    } else {
+      alert("Wrong Password!");
+    }
+  }, 500);
 }
-
-function addVideo(){
-  let title = document.getElementById("videoTitle").value;
-  let link = document.getElementById("videoLink").value;
-
-  let id = extractVideoID(link);
-
-  if(!title || !id){
-    alert("Enter valid title and YouTube link");
-    return;
-  }
-
-  videos.push({
-    title:title,
-    id:id,
-    likes:0
-  });
-
-  saveData();
-  renderVideos();
-  showHome();
-
-  document.getElementById("videoTitle").value="";
-  document.getElementById("videoLink").value="";
-}
-
-function likeVideo(index){
-  videos[index].likes++;
-  saveData();
-  renderVideos();
-}
-
-function deleteVideo(index){
-  videos.splice(index,1);
-  saveData();
-  renderVideos();
-}
-
-function showHome(){
-  document.getElementById("homePage").classList.remove("hidden");
-  document.getElementById("uploadPage").classList.add("hidden");
-}
-
-function showUpload(){
-  document.getElementById("homePage").classList.add("hidden");
-  document.getElementById("uploadPage").classList.remove("hidden");
-}
-
-renderVideos();
-
 </script>
 
 </body>
 </html>
-<a href="premium.html">
-  <button>Go Premium 🔥</button>
-</a>
