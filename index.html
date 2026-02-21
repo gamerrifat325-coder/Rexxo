@@ -4,138 +4,199 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
-<title>RexxoTube Premium</title>
+<title>RexxoTube</title>
+
 <style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#0f0f0f;
-  color:white;
-}
-header{
-  background:black;
-  padding:15px;
-  font-size:22px;
-  font-weight:bold;
-  text-align:center;
-  border-bottom:1px solid #222;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-header button{
-  padding:5px 10px;
-  border:none;
-  border-radius:5px;
-  background:#22c55e;
-  color:white;
-  cursor:pointer;
-}
-.container{
-  padding:10px;
-  margin-bottom:70px;
-}
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:black;
-  display:flex;
-  justify-content:space-around;
-  padding:10px 0;
-  border-top:1px solid #222;
-}
-.bottom-nav button{
-  background:none;
-  color:white;
-  font-size:16px;
-  border:none;
-  cursor:pointer;
-}
-input, select{
-  padding:10px;
-  width:95%;
-  margin-bottom:10px;
-  border-radius:5px;
-  border:none;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#0f0f0f;color:white;}
+header{background:black;padding:15px;font-size:22px;font-weight:bold;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center;}
+header button{padding:5px 10px;border:none;border-radius:5px;background:#22c55e;color:white;cursor:pointer;}
+.container{padding:10px;margin-bottom:70px;}
+input{padding:10px;width:95%;margin-bottom:10px;border-radius:5px;border:none;}
+button{padding:5px 10px;margin-right:5px;border:none;border-radius:5px;font-weight:bold;cursor:pointer;}
 .hidden{display:none;}
+.video-card{background:#181818;padding:10px;border-radius:8px;margin-bottom:15px;}
+iframe{width:100%;border-radius:8px;}
+.bottom-nav{position:fixed;bottom:0;width:100%;background:black;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222;}
+.bottom-nav button{background:none;color:white;font-size:16px;border:none;cursor:pointer;}
+.profile-container{display:flex;align-items:center;margin-bottom:10px;}
+.profile-pic{width:50px;height:50px;border-radius:50%;background:#555;display:flex;justify-content:center;align-items:center;color:#ccc;font-weight:bold;font-size:20px;}
+.profile-btn{background:#f59e0b;color:white;}
+.info-btn{background:#2563eb;color:white;border-radius:50%;width:20px;height:20px;padding:0;cursor:pointer;margin-left:5px;}
+.package-box{background:#181818;padding:15px;border-radius:8px;cursor:pointer;margin-top:10px;}
 </style>
 </head>
 <body>
 
 <header>
-  <span>🔥 RexxoTube</span>
-  <button onclick="showPremium()">Go Premium</button>
+<span>🔥 RexxoTube</span>
+<button onclick="goPremium()">Go Premium</button>
 </header>
 
 <div class="container">
 
-<!-- Home Page -->
-<div id="homePage">
-  <p>Welcome to RexxoTube 🔥</p>
-  <!-- Ads / sample videos removed -->
+<!-- Home -->
+<div id="homeTab">
+<input type="text" id="searchInput" placeholder="Search videos..." onkeyup="searchVideos()">
+<div id="videoList"></div>
 </div>
 
-<!-- Premium Page -->
-<div id="premiumPage" class="hidden">
-  <h2>Select Premium Plan</h2>
-  <select id="plan">
-    <option value="50">₹50 - 20 Days</option>
-    <option value="100">₹100 - 30 Days</option>
-    <option value="200">₹200 - 60 Days</option>
-  </select>
-  <br>
-  <input type="text" id="redeemCode" placeholder="Enter Redeem Code">
-  <br>
-  <button onclick="sendWhatsApp()">Submit</button>
-  <br>
-  <button onclick="showHome()">Back Home</button>
+<!-- Create -->
+<div id="createTab" class="hidden">
+<h3>Add YouTube Video</h3>
+<input type="text" id="videoTitle" placeholder="Enter Video Title">
+<input type="text" id="videoLink" placeholder="Paste YouTube Link">
+<button onclick="uploadCheck()">Add Video</button>
 </div>
 
-<!-- Secret Premium Page -->
-<div id="secretPage" class="hidden">
-  <h1>Welcome to Premium Content 🔥</h1>
-  <p>Yaha tumhara secret content hoga.</p>
-  <button onclick="showHome()">Back Home</button>
+<!-- Subscription (Premium) -->
+<div id="subscriptionTab" class="hidden">
+<h2>Premium Plan</h2>
+
+<div class="package-box" onclick="showRedeem()">
+₹200 Premium Package 
+<button class="info-btn" onclick="showInfo(event)">?</button>
 </div>
 
+<div id="redeemSection" class="hidden">
+<input type="text" id="redeemCode" placeholder="Enter Redeem Code">
+<button onclick="submitRedeem()">Submit</button>
+</div>
+
+</div>
+
+<!-- Profile -->
+<div id="meTab" class="hidden">
+<h2>Profile</h2>
+<div class="profile-container">
+<div id="profilePic" class="profile-pic"></div>
+<div>
+<span id="profileName"></span>
+</div>
+</div>
+<button class="profile-btn" onclick="editName()">Edit Name</button>
+</div>
+
+</div>
+
+<div class="bottom-nav">
+<button onclick="switchTab('homeTab')">Home</button>
+<button onclick="switchTab('createTab')">Create</button>
+<button onclick="switchTab('subscriptionTab')">Subscription</button>
+<button onclick="switchTab('meTab')">Me</button>
 </div>
 
 <script>
-// Page switch
-function showHome(){
-  document.getElementById("homePage").classList.remove("hidden");
-  document.getElementById("premiumPage").classList.add("hidden");
-  document.getElementById("secretPage").classList.add("hidden");
-}
-function showPremium(){
-  document.getElementById("homePage").classList.add("hidden");
-  document.getElementById("premiumPage").classList.remove("hidden");
-  document.getElementById("secretPage").classList.add("hidden");
+
+let user={
+name:localStorage.getItem("userName")||"",
+dob:localStorage.getItem("userDOB")||"",
+premium:localStorage.getItem("userPremium")==="true"
+};
+
+// First time prompt
+if(!user.name){
+user.name=prompt("Enter your Name:")||"Guest";
+user.dob=prompt("Enter your Birth Date (DD/MM/YYYY):")||"";
+localStorage.setItem("userName",user.name);
+localStorage.setItem("userDOB",user.dob);
 }
 
-// WhatsApp premium system
-function sendWhatsApp(){
-  let plan = document.getElementById("plan").value;
-  let code = document.getElementById("redeemCode").value.trim();
-  if(!code){ alert("Enter Redeem Code"); return;}
-  let message = "Premium Plan: ₹"+plan+"%0A Redeem Code: "+code;
-  let phone = "919607903090"; // Tumhara WhatsApp number
-  window.open("https://wa.me/"+phone+"?text="+message);
-  setTimeout(()=>{
-    let password = prompt("Enter Premium Password (after verification):");
-    if(password==="Rexxo123"){
-      document.getElementById("homePage").classList.add("hidden");
-      document.getElementById("premiumPage").classList.add("hidden");
-      document.getElementById("secretPage").classList.remove("hidden");
-    }else{ alert("Wrong Password!"); }
-  },500);
+// Profile display
+function updateProfileDisplay(){
+document.getElementById("profilePic").innerText=user.name.charAt(0).toUpperCase();
+document.getElementById("profileName").innerText=user.name;
+}
+updateProfileDisplay();
+
+// Edit name
+function editName(){
+let newName=prompt("Enter new Name:",user.name);
+if(newName){
+user.name=newName;
+localStorage.setItem("userName",newName);
+updateProfileDisplay();
+}
 }
 
-// Initial page
-showHome();
+// Tab switch
+function switchTab(tabId){
+['homeTab','createTab','subscriptionTab','meTab'].forEach(t=>document.getElementById(t).classList.add('hidden'));
+document.getElementById(tabId).classList.remove('hidden');
+}
+
+// Go Premium
+function goPremium(){
+switchTab('subscriptionTab');
+}
+
+// Info
+function showInfo(event){
+event.stopPropagation();
+alert("If you buy ₹200 Premium, Shorts and Bio features will be unlocked for you.");
+}
+
+// Show redeem
+function showRedeem(){
+document.getElementById("redeemSection").classList.remove("hidden");
+}
+
+// Submit redeem → WhatsApp only
+function submitRedeem(){
+let code=document.getElementById("redeemCode").value;
+if(!code){alert("Enter Redeem Code");return;}
+
+let phone="919607903090";
+let message=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);
+window.open("https://wa.me/"+phone+"?text="+message,"_blank");
+
+alert("Redeem request sent to Admin. Wait for approval.");
+}
+
+// Sample videos
+let videos=[
+{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0},
+{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0}
+];
+
+function renderVideos(list=videos){
+let container=document.getElementById("videoList");
+container.innerHTML="";
+list.forEach((v,i)=>{
+container.innerHTML+=`
+<div class="video-card">
+<h4>${v.title}</h4>
+<iframe src="https://www.youtube.com/embed/${v.id}" frameborder="0" allowfullscreen></iframe>
+<br>
+<button onclick="likeVideo(${i})">👍 ${v.likes}</button>
+<button onclick="deleteVideo(${i})">🗑 Delete</button>
+</div>`;
+});
+}
+
+function likeVideo(i){videos[i].likes++;renderVideos();}
+function deleteVideo(i){videos.splice(i,1);renderVideos();}
+
+function uploadCheck(){
+if(!user.premium){alert("Premium Only");return;}
+addVideo();
+}
+
+function addVideo(){
+let title=document.getElementById("videoTitle").value;
+let link=document.getElementById("videoLink").value;
+let id=link.split("v=")[1]||link.split("youtu.be/")[1];
+if(!title||!id){alert("Enter valid title & URL");return;}
+videos.push({title,id,likes:0});
+renderVideos();
+}
+
+function searchVideos(){
+let term=document.getElementById("searchInput").value.toLowerCase();
+renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));
+}
+
+renderVideos();
+
 </script>
-
 </body>
 </html>
