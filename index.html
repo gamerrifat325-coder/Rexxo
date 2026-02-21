@@ -1,169 +1,147 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rexxo Tube</title>
+
+<!-- 🔥 GOOGLE VERIFICATION CODE YAHA DAALNA -->
+<meta name="google-site-verification" content="PASTE_YOUR_GOOGLE_CODE_HERE" />
+
 <style>
-body{font-family:Arial;margin:0;background:#111;color:#fff}
-.hidden{display:none}
-header{padding:10px;background:#000;display:flex;justify-content:space-between}
-input,button{padding:6px;margin:5px}
-.video-card{background:#222;margin:10px;padding:10px;border-radius:10px}
-.profile-pic{
-width:40px;height:40px;border-radius:50%;
-background:red;display:flex;align-items:center;justify-content:center
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#0d0d0d;
+color:white;
 }
-.nav{position:fixed;bottom:0;width:100%;background:#000;
-display:flex;justify-content:space-around;padding:10px}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:#111;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+header h1{
+margin:0;
+font-size:18px;
+}
+
+.search-box input{
+padding:6px;
+border-radius:6px;
+border:none;
+}
+
+.page{
+display:none;
+padding:10px;
+padding-bottom:70px;
+}
+
+.active{
+display:block;
+}
+
+.video-card{
+background:#1c1c1c;
+margin-bottom:15px;
+padding:10px;
+border-radius:10px;
+}
+
+iframe{
+width:100%;
+height:200px;
+border-radius:10px;
+}
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+width:100%;
+background:#111;
+display:flex;
+justify-content:space-around;
+padding:10px 0;
+}
+
+.bottom-nav button{
+background:none;
+border:none;
+color:white;
+font-size:14px;
+}
+
+.bottom-nav button.active-btn{
+color:red;
+}
 </style>
 </head>
+
 <body>
 
 <header>
-<h2>Rexxo Tube</h2>
-<input type="text" id="searchInput" placeholder="Search">
-<button onclick="searchVideos()">Search</button>
+<h1>Rexxo Tube</h1>
+<div class="search-box">
+<input type="text" placeholder="Search">
+</div>
 </header>
 
-<div id="homeTab"></div>
-
-<div id="createTab" class="hidden">
-<h3>Create Video</h3>
-<input type="text" id="videoTitle" placeholder="Title"><br>
-<input type="text" id="videoLink" placeholder="YouTube Link"><br>
-<button onclick="uploadCheck()">Upload</button>
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+<div class="video-card">
+<h3>Rexxo Gameplay 1</h3>
+<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
 </div>
 
-<div id="subscriptionTab" class="hidden">
-<h2>Go Premium</h2>
-
-<div class="video-card" onclick="showRedeem()">
-₹200 Package 
-<button onclick="showInfo(event)">?</button>
+<div class="video-card">
+<h3>Rexxo Gameplay 2</h3>
+<iframe src="https://www.youtube.com/embed/9bZkp7q19f0" allowfullscreen></iframe>
+</div>
 </div>
 
-<div id="redeemSection" class="hidden">
-<input type="text" id="redeemCode" placeholder="Enter Redeem Code">
-<button onclick="submitRedeem()">Submit</button>
+<!-- CREATE PAGE -->
+<div id="create" class="page">
+<h2>Create Section</h2>
+<p>Yaha future me video upload system add kar sakte ho.</p>
 </div>
 
+<!-- PREMIUM PAGE -->
+<div id="premium" class="page">
+<h2>Rexxo Premium 👑</h2>
+<p>Premium members ko special content milega.</p>
+<button onclick="alert('Premium feature coming soon!')">Buy Premium</button>
 </div>
 
-<div id="meTab" class="hidden"></div>
+<!-- PROFILE PAGE -->
+<div id="me" class="page">
+<h2>My Profile</h2>
+<p>Username: Rexxo</p>
+<p>Status: Free Member</p>
+</div>
 
-<div class="nav">
-<button onclick="switchTab('homeTab')">Home</button>
-<button onclick="switchTab('createTab')">Create</button>
-<button onclick="goPremium()">Premium</button>
-<button onclick="switchTab('meTab')">Me</button>
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+<button onclick="showPage('home', this)" class="active-btn">Home</button>
+<button onclick="showPage('create', this)">Create</button>
+<button onclick="showPage('premium', this)">Premium</button>
+<button onclick="showPage('me', this)">Me</button>
 </div>
 
 <script>
+function showPage(pageId, btn){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(pageId).classList.add('active');
 
-let user={
-name:localStorage.getItem("userName")||"",
-premium:localStorage.getItem("userPremium")==="true"
-};
-
-if(!user.name){
-user.name=prompt("Enter your Name:")||"Guest";
-localStorage.setItem("userName",user.name);
+document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active-btn'));
+btn.classList.add('active-btn');
 }
-
-let videos=[
-{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0,uploader:"Admin",time:"3 hours ago"},
-{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0,uploader:"Admin",time:"1 day ago"}
-];
-
-function switchTab(id){
-['homeTab','createTab','subscriptionTab','meTab']
-.forEach(t=>document.getElementById(t).classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
-renderVideos();
-}
-
-function goPremium(){
-switchTab("subscriptionTab");
-}
-
-function showInfo(e){
-e.stopPropagation();
-alert("If you buy ₹200 Premium, Shorts and Bio features will be unlocked.");
-}
-
-function showRedeem(){
-document.getElementById("redeemSection").classList.remove("hidden");
-}
-
-function submitRedeem(){
-let code=document.getElementById("redeemCode").value;
-if(!code){alert("Enter Redeem Code");return;}
-
-let phone="919607903090";
-let message=encodeURIComponent(
-"Premium Redeem Request\nCode: "+code+"\nUser: "+user.name
-);
-
-window.location.href=
-"https://api.whatsapp.com/send?phone="+phone+"&text="+message;
-}
-
-function renderVideos(list=videos){
-let container=document.getElementById("homeTab");
-container.innerHTML="";
-
-list.forEach((v,i)=>{
-container.innerHTML+=`
-<div class="video-card">
-<h4>${v.title}</h4>
-<iframe width="100%" height="200"
-src="https://www.youtube.com/embed/${v.id}"
-frameborder="0" allowfullscreen></iframe>
-<br>
-<button onclick="likeVideo(${i})">👍 ${v.likes}</button>
-</div>`;
-});
-}
-
-function likeVideo(i){
-videos[i].likes++;
-renderVideos();
-}
-
-function uploadCheck(){
-if(!user.premium){
-alert("Premium Only Feature");
-return;
-}
-addVideo();
-}
-
-function addVideo(){
-let title=document.getElementById("videoTitle").value;
-let link=document.getElementById("videoLink").value;
-let id=link.split("v=")[1]||link.split("youtu.be/")[1];
-
-if(!title||!id){
-alert("Enter valid details");
-return;
-}
-
-videos.push({
-title,id,likes:0,uploader:user.name,time:"Just now"
-});
-
-renderVideos();
-}
-
-function searchVideos(){
-let term=document.getElementById("searchInput").value.toLowerCase();
-renderVideos(
-videos.filter(v=>v.title.toLowerCase().includes(term))
-);
-}
-
-renderVideos();
-
 </script>
 
 </body>
