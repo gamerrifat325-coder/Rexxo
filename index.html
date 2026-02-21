@@ -3,7 +3,8 @@
 let user={
 name:localStorage.getItem("userName")||"",
 dob:localStorage.getItem("userDOB")||"",
-premium:localStorage.getItem("userPremium")==="true"
+premium:localStorage.getItem("userPremium")==="true",
+blocked:[]
 };
 
 if(!user.name){
@@ -13,14 +14,9 @@ localStorage.setItem("userName",user.name);
 localStorage.setItem("userDOB",user.dob);
 }
 
-let searchHistory=[];
-let watchedCount=0;
-let halfWatchedCount=0;
-
-let videos=[
-{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0,uploader:"Admin",time:"3 hours ago"},
-{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0,uploader:"Admin",time:"1 day ago"}
-];
+let searchHistory=JSON.parse(localStorage.getItem("searchHistory")||"[]");
+let watchCount=0;
+let halfWatchCount=0;
 
 function updateProfileDisplay(){
 document.getElementById("profilePic").innerText=user.name.charAt(0).toUpperCase();
@@ -41,15 +37,10 @@ renderVideos();
 function switchTab(tabId){
 ['homeTab','createTab','subscriptionTab','meTab'].forEach(t=>document.getElementById(t).classList.add('hidden'));
 document.getElementById(tabId).classList.remove('hidden');
-
-if(tabId==="meTab"){
-renderYourVideos();
-}
+if(tabId==="meTab") renderYourVideos();
 }
 
-function goPremium(){
-switchTab('subscriptionTab');
-}
+function goPremium(){switchTab('subscriptionTab');}
 
 function showInfo(event){
 event.stopPropagation();
@@ -63,61 +54,64 @@ document.getElementById("redeemSection").classList.remove("hidden");
 function submitRedeem(){
 let code=document.getElementById("redeemCode").value;
 if(!code){alert("Enter Redeem Code");return;}
-
 let phone="919607903090";
 let message=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);
-window.location.href="https://api.whatsapp.com/send?phone="+phone+"&text="+message;
+window.open("https://wa.me/"+phone+"?text="+message,"_blank");
+alert("Redeem request sent to Admin.");
+}
+
+let videos=[
+{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0,owner:"Admin",time:Date.now()},
+{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0,owner:"Admin",time:Date.now()}
+];
+
+function timeAgo(time){
+let diff=Math.floor((Date.now()-time)/3600000);
+return diff<=1?"Just now":diff+" hours ago";
 }
 
 function renderVideos(list=videos){
 let container=document.getElementById("videoList");
 container.innerHTML="";
-
 list.forEach((v,i)=>{
+if(user.blocked.includes(v.owner)) return;
 
-let owner=v.uploader===user.name;
+let ownerControls="";
+if(v.owner===user.name){
+ownerControls=`<button onclick="deleteVideo(${i})">🗑 Delete</button>`;
+}else{
+ownerControls=`<button onclick="reportVideo()">🚩 Report</button>
+<button onclick="blockUser('${v.owner}')">🚫 Block</button>`;
+}
 
 container.innerHTML+=`
 <div class="video-card">
-<h4>${v.title} 
-${!owner ? `<button onclick="reportVideo()">Report</button>
-<button onclick="blockUser('${v.uploader}')">Block</button>` : ``}
-</h4>
-
-<iframe src="https://www.youtube.com/embed/${v.id}" 
-onload="trackWatch()" frameborder="0" allowfullscreen></iframe>
-
-<div style="display:flex;align-items:center;margin-top:8px;">
-<div class="profile-pic">${v.uploader.charAt(0).toUpperCase()}</div>
-<div style="margin-left:8px;">
-<div>${v.uploader}</div>
-<small>${v.time}</small>
+<h4>${v.title}</h4>
+<iframe src="https://www.youtube.com/embed/${v.id}" allowfullscreen 
+onplay="watchCount++"></iframe>
+<br>
+<div style="display:flex;align-items:center;margin-top:5px;">
+<div style="width:30px;height:30px;border-radius:50%;background:#555;
+display:flex;align-items:center;justify-content:center;">
+${v.owner.charAt(0).toUpperCase()}
 </div>
+<span style="margin-left:8px;">${v.owner} • ${timeAgo(v.time)}</span>
 </div>
-
 <br>
 <button onclick="likeVideo(${i})">👍 ${v.likes}</button>
-${owner ? `<button onclick="deleteVideo(${i})">Delete</button>` : ``}
+${ownerControls}
 </div>`;
 });
 }
 
-function likeVideo(i){
-videos[i].likes++;
+function likeVideo(i){videos[i].likes++;renderVideos();}
+function deleteVideo(i){videos.splice(i,1);renderVideos();}
+
+function reportVideo(){alert("Video Reported");}
+function blockUser(owner){
+user.blocked.push(owner);
+alert(owner+" Blocked");
 renderVideos();
-}
-
-function deleteVideo(i){
-videos.splice(i,1);
-renderVideos();
-}
-
-function reportVideo(){
-alert("Video reported.");
-}
-
-function blockUser(name){
-alert(name+" blocked.");
 }
 
 function uploadCheck(){
@@ -130,71 +124,39 @@ let title=document.getElementById("videoTitle").value;
 let link=document.getElementById("videoLink").value;
 let id=link.split("v=")[1]||link.split("youtu.be/")[1];
 if(!title||!id){alert("Enter valid title & URL");return;}
-
-videos.push({
-title,
-id,
-likes:0,
-uploader:user.name,
-time:"Just now"
-});
-
+videos.push({title,id,likes:0,owner:user.name,time:Date.now()});
 renderVideos();
 }
 
 function searchVideos(){
 let term=document.getElementById("searchInput").value.toLowerCase();
 if(term) searchHistory.push(term);
+localStorage.setItem("searchHistory",JSON.stringify(searchHistory));
 renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));
 }
 
-function trackWatch(){
-watchedCount++;
-setTimeout(()=>{halfWatchedCount++;},3000);
-}
-
 function renderYourVideos(){
-let meTab=document.getElementById("meTab");
-
-let yourVideos=videos.filter(v=>v.uploader===user.name);
-
-let html=`<h3>Your Videos</h3>`;
-
-yourVideos.forEach((v,i)=>{
+let container=document.getElementById("meTab");
+let your=videos.filter(v=>v.owner===user.name);
+let html="<h3>Your Videos</h3>";
+your.forEach((v,i)=>{
 html+=`
-<div class="video-card">
-<h4>${v.title}
-<button onclick="editVideo(${i})">⋮</button>
-</h4>
-<small>${v.time}</small>
+<div style="background:#222;padding:8px;margin-bottom:8px;">
+<b>${v.title}</b>
+<button onclick="editVideo(${i})">✏ Edit</button>
+<button onclick="deleteVideo(${i})">🗑</button>
 </div>`;
 });
-
-html+=`
-<h3>History</h3>
-<p>Search History: ${searchHistory.join(", ")||"None"}</p>
-<p>Videos Watched: ${watchedCount}</p>
-<p>Half Watched: ${halfWatchedCount}</p>
-`;
-
-meTab.innerHTML=`
-<h2>Profile</h2>
-<div class="profile-container">
-<div class="profile-pic">${user.name.charAt(0).toUpperCase()}</div>
-<div><span>${user.name}</span></div>
-</div>
-<button class="profile-btn" onclick="editName()">Edit Name</button>
-${html}
-`;
+html+=`<h3>History</h3>
+Searches: ${searchHistory.join(", ")}<br>
+Videos Watched: ${watchCount}<br>
+Half Watched: ${halfWatchCount}`;
+container.innerHTML=html;
 }
 
-function editVideo(index){
-let newTitle=prompt("Edit Title:",videos[index].title);
-if(newTitle){
-videos[index].title=newTitle;
-renderYourVideos();
-renderVideos();
-}
+function editVideo(i){
+let newTitle=prompt("Edit Title:",videos[i].title);
+if(newTitle){videos[i].title=newTitle;renderVideos();}
 }
 
 renderVideos();
