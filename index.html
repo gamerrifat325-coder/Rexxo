@@ -1,200 +1,158 @@
 <script>
 
-let user={
-name:localStorage.getItem("userName")||"",
-dob:localStorage.getItem("userDOB")||"",
-premium:localStorage.getItem("userPremium")==="true"
+let user = {
+  name: localStorage.getItem("userName") || "",
+  dob: localStorage.getItem("userDOB") || "",
+  premium: localStorage.getItem("userPremium") === "true"
 };
 
-if(!user.name){
-user.name=prompt("Enter your Name:")||"Guest";
-user.dob=prompt("Enter your Birth Date (DD/MM/YYYY):")||"";
-localStorage.setItem("userName",user.name);
-localStorage.setItem("userDOB",user.dob);
+if (!user.name) {
+  user.name = prompt("Enter your Name:") || "Guest";
+  user.dob = prompt("Enter your Birth Date (DD/MM/YYYY):") || "";
+  localStorage.setItem("userName", user.name);
+  localStorage.setItem("userDOB", user.dob);
 }
 
-let searchHistory=[];
-let watchedCount=0;
-let halfWatchedCount=0;
+function updateProfile() {
+  document.getElementById("profilePic").innerText =
+    user.name.charAt(0).toUpperCase();
+  document.getElementById("profileName").innerText = user.name;
+}
 
-let videos=[
-{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",likes:0,uploader:"Admin",time:"3 hours ago"},
-{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",likes:0,uploader:"Admin",time:"1 day ago"}
+updateProfile();
+
+let videos = [
+  { title: "Rexxo Gameplay 1", id: "dQw4w9WgXcQ", likes: 0, uploader: "Admin", time: "3 hours ago" },
+  { title: "Rexxo Gameplay 2", id: "9bZkp7q19f0", likes: 0, uploader: "Admin", time: "1 day ago" }
 ];
 
-function updateProfileDisplay(){
-document.getElementById("profilePic").innerText=user.name.charAt(0).toUpperCase();
-document.getElementById("profileName").innerText=user.name;
-}
-updateProfileDisplay();
+function switchTab(tab) {
+  ["homeTab", "createTab", "subscriptionTab", "meTab"]
+    .forEach(t => document.getElementById(t).classList.add("hidden"));
 
-function editName(){
-let newName=prompt("Enter new Name:",user.name);
-if(newName){
-user.name=newName;
-localStorage.setItem("userName",newName);
-updateProfileDisplay();
-renderVideos();
-}
+  document.getElementById(tab).classList.remove("hidden");
+
+  if (tab === "meTab") renderProfile();
 }
 
-function switchTab(tabId){
-['homeTab','createTab','subscriptionTab','meTab'].forEach(t=>document.getElementById(t).classList.add('hidden'));
-document.getElementById(tabId).classList.remove('hidden');
-
-if(tabId==="meTab"){
-renderYourVideos();
-}
+function goPremium() {
+  switchTab("subscriptionTab");
 }
 
-function goPremium(){
-switchTab('subscriptionTab');
+function showInfo(e) {
+  e.stopPropagation();
+  alert("If you buy ₹200 Premium, Shorts and Bio features will be unlocked for you.");
 }
 
-function showInfo(event){
-event.stopPropagation();
-alert("If you buy ₹200 Premium, Shorts and Bio features will be unlocked for you.");
+function showRedeem() {
+  document.getElementById("redeemSection").classList.remove("hidden");
 }
 
-function showRedeem(){
-document.getElementById("redeemSection").classList.remove("hidden");
+function submitRedeem() {
+  let code = document.getElementById("redeemCode").value;
+  if (!code) {
+    alert("Enter Redeem Code");
+    return;
+  }
+
+  let phone = "919607903090";
+  let message = encodeURIComponent(
+    "Premium Redeem Request\nCode: " + code + "\nUser: " + user.name
+  );
+
+  window.location.href =
+    "https://api.whatsapp.com/send?phone=" + phone + "&text=" + message;
 }
 
-function submitRedeem(){
-let code=document.getElementById("redeemCode").value;
-if(!code){alert("Enter Redeem Code");return;}
-
-let phone="919607903090";
-let message=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);
-window.location.href="https://api.whatsapp.com/send?phone="+phone+"&text="+message;
+function uploadCheck() {
+  if (!user.premium) {
+    alert("Premium Only");
+    return;
+  }
+  addVideo();
 }
 
-function renderVideos(list=videos){
-let container=document.getElementById("videoList");
-container.innerHTML="";
+function addVideo() {
+  let title = document.getElementById("videoTitle").value;
+  let link = document.getElementById("videoLink").value;
 
-list.forEach((v,i)=>{
+  let id = link.split("v=")[1] || link.split("youtu.be/")[1];
 
-let owner=v.uploader===user.name;
+  if (!title || !id) {
+    alert("Enter valid title & URL");
+    return;
+  }
 
-container.innerHTML+=`
-<div class="video-card">
-<h4>${v.title} 
-${!owner ? `<button onclick="reportVideo()">Report</button>
-<button onclick="blockUser('${v.uploader}')">Block</button>` : ``}
-</h4>
+  videos.push({
+    title: title,
+    id: id,
+    likes: 0,
+    uploader: user.name,
+    time: "Just now"
+  });
 
-<iframe src="https://www.youtube.com/embed/${v.id}" 
-onload="trackWatch()" frameborder="0" allowfullscreen></iframe>
-
-<div style="display:flex;align-items:center;margin-top:8px;">
-<div class="profile-pic">${v.uploader.charAt(0).toUpperCase()}</div>
-<div style="margin-left:8px;">
-<div>${v.uploader}</div>
-<small>${v.time}</small>
-</div>
-</div>
-
-<br>
-<button onclick="likeVideo(${i})">👍 ${v.likes}</button>
-${owner ? `<button onclick="deleteVideo(${i})">Delete</button>` : ``}
-</div>`;
-});
+  renderVideos();
 }
 
-function likeVideo(i){
-videos[i].likes++;
-renderVideos();
+function likeVideo(i) {
+  videos[i].likes++;
+  renderVideos();
 }
 
-function deleteVideo(i){
-videos.splice(i,1);
-renderVideos();
+function deleteVideo(i) {
+  videos.splice(i, 1);
+  renderVideos();
 }
 
-function reportVideo(){
-alert("Video reported.");
+function renderVideos() {
+  let container = document.getElementById("videoList");
+  container.innerHTML = "";
+
+  videos.forEach((v, i) => {
+    let owner = v.uploader === user.name;
+
+    container.innerHTML += `
+    <div class="video-card">
+      <h4>${v.title}</h4>
+      <iframe src="https://www.youtube.com/embed/${v.id}" 
+      frameborder="0" allowfullscreen></iframe>
+
+      <div style="display:flex;align-items:center;margin-top:8px;">
+        <div class="profile-pic">${v.uploader.charAt(0).toUpperCase()}</div>
+        <div style="margin-left:8px;">
+          <div>${v.uploader}</div>
+          <small>${v.time}</small>
+        </div>
+      </div>
+
+      <br>
+      <button onclick="likeVideo(${i})">👍 ${v.likes}</button>
+      ${owner ? `<button onclick="deleteVideo(${i})">Delete</button>` : ``}
+    </div>`;
+  });
 }
 
-function blockUser(name){
-alert(name+" blocked.");
+function renderProfile() {
+  let meTab = document.getElementById("meTab");
+
+  meTab.innerHTML = `
+  <h2>Profile</h2>
+  <div class="profile-container">
+    <div class="profile-pic">${user.name.charAt(0).toUpperCase()}</div>
+    <div><span>${user.name}</span></div>
+  </div>
+  <button onclick="editName()">Edit Name</button>
+  `;
 }
 
-function uploadCheck(){
-if(!user.premium){alert("Premium Only");return;}
-addVideo();
-}
-
-function addVideo(){
-let title=document.getElementById("videoTitle").value;
-let link=document.getElementById("videoLink").value;
-let id=link.split("v=")[1]||link.split("youtu.be/")[1];
-if(!title||!id){alert("Enter valid title & URL");return;}
-
-videos.push({
-title,
-id,
-likes:0,
-uploader:user.name,
-time:"Just now"
-});
-
-renderVideos();
-}
-
-function searchVideos(){
-let term=document.getElementById("searchInput").value.toLowerCase();
-if(term) searchHistory.push(term);
-renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));
-}
-
-function trackWatch(){
-watchedCount++;
-setTimeout(()=>{halfWatchedCount++;},3000);
-}
-
-function renderYourVideos(){
-let meTab=document.getElementById("meTab");
-
-let yourVideos=videos.filter(v=>v.uploader===user.name);
-
-let html=`<h3>Your Videos</h3>`;
-
-yourVideos.forEach((v,i)=>{
-html+=`
-<div class="video-card">
-<h4>${v.title}
-<button onclick="editVideo(${i})">⋮</button>
-</h4>
-<small>${v.time}</small>
-</div>`;
-});
-
-html+=`
-<h3>History</h3>
-<p>Search History: ${searchHistory.join(", ")||"None"}</p>
-<p>Videos Watched: ${watchedCount}</p>
-<p>Half Watched: ${halfWatchedCount}</p>
-`;
-
-meTab.innerHTML=`
-<h2>Profile</h2>
-<div class="profile-container">
-<div class="profile-pic">${user.name.charAt(0).toUpperCase()}</div>
-<div><span>${user.name}</span></div>
-</div>
-<button class="profile-btn" onclick="editName()">Edit Name</button>
-${html}
-`;
-}
-
-function editVideo(index){
-let newTitle=prompt("Edit Title:",videos[index].title);
-if(newTitle){
-videos[index].title=newTitle;
-renderYourVideos();
-renderVideos();
-}
+function editName() {
+  let newName = prompt("Enter new Name:", user.name);
+  if (newName) {
+    user.name = newName;
+    localStorage.setItem("userName", newName);
+    updateProfile();
+    renderVideos();
+  }
 }
 
 renderVideos();
