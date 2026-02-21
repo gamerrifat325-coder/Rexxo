@@ -6,57 +6,101 @@
 <meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
 <title>RexxoTube Premium</title>
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f0f0f;
-  color: white;
-  text-align: center;
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0f0f0f;
+  color:white;
 }
-header {
-  background: black;
-  padding: 15px;
-  font-size: 22px;
-  font-weight: bold;
-  border-bottom: 1px solid #222;
+header{
+  background:black;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  border-bottom:1px solid #222;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
-.container {
-  padding: 20px;
+header button{
+  padding:5px 10px;
+  border:none;
+  border-radius:5px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
 }
-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  margin: 10px 0;
-  font-weight: bold;
-  cursor: pointer;
+.container{
+  padding:10px;
+  margin-bottom:70px;
 }
-input, select {
-  padding: 10px;
-  width: 80%;
-  margin: 10px 0;
-  border-radius: 5px;
-  border: none;
+.video-card{
+  background:#181818;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:15px;
 }
-#homePage, #premiumPage, #secretPage {
-  display: none;
+iframe{
+  width:100%;
+  height:200px;
+  border-radius:8px;
 }
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:black;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #222;
+}
+.bottom-nav button{
+  background:none;
+  color:white;
+  font-size:16px;
+  border:none;
+  cursor:pointer;
+}
+input, select{
+  padding:10px;
+  width:95%;
+  margin-bottom:10px;
+  border-radius:5px;
+  border:none;
+}
+.hidden{display:none;}
+button.action-btn{
+  padding:5px 10px;
+  margin-right:5px;
+  border:none;
+  border-radius:5px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.like{background:#2563eb;color:white;}
+.delete{background:red;color:white;}
+.upload-btn{background:#22c55e;color:white;width:100%;}
 </style>
 </head>
 <body>
 
-<header>🔥 RexxoTube</header>
+<header>
+  <span>🔥 RexxoTube</span>
+  <button onclick="showPremium()">Go Premium</button>
+</header>
 
 <div class="container">
 
 <!-- Home Page -->
 <div id="homePage">
-  <h1>Welcome to RexxoTube 🔥</h1>
-  <button onclick="showPremium()">Go Premium</button>
+  <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="searchVideos()">
+  <div id="videoList"></div>
 </div>
 
 <!-- Premium Page -->
-<div id="premiumPage">
+<div id="premiumPage" class="hidden">
   <h2>Select Premium Plan</h2>
   <select id="plan">
     <option value="50">₹50 - 20 Days</option>
@@ -72,7 +116,7 @@ input, select {
 </div>
 
 <!-- Secret Premium Page -->
-<div id="secretPage">
+<div id="secretPage" class="hidden">
   <h1>Welcome to Premium Content 🔥</h1>
   <p>Yaha tumhara secret content hoga.</p>
   <button onclick="showHome()">Back Home</button>
@@ -81,50 +125,77 @@ input, select {
 </div>
 
 <script>
-// Initial page show
-document.getElementById("homePage").style.display = "block";
+// Sample videos
+let videos = [
+  {title:"Rexxo Gameplay 1", id:"dQw4w9WgXcQ", likes:0},
+  {title:"Rexxo Gameplay 2", id:"9bZkp7q19f0", likes:0},
+  {title:"Rexxo Gameplay 3", id:"3JZ_D3ELwOQ", likes:0}
+];
 
-// Page switches
-function showHome() {
-  document.getElementById("homePage").style.display = "block";
-  document.getElementById("premiumPage").style.display = "none";
-  document.getElementById("secretPage").style.display = "none";
-}
-
-function showPremium() {
-  document.getElementById("homePage").style.display = "none";
-  document.getElementById("premiumPage").style.display = "block";
-  document.getElementById("secretPage").style.display = "none";
-}
-
-// WhatsApp redeem system
-function sendWhatsApp() {
-  var plan = document.getElementById("plan").value;
-  var code = document.getElementById("redeemCode").value.trim();
-
-  if(!code) {
-    alert("Enter Redeem Code");
+function renderVideos(list=videos){
+  let videoList = document.getElementById("videoList");
+  videoList.innerHTML="";
+  if(list.length===0){
+    videoList.innerHTML="<p>No videos found.</p>";
     return;
   }
-
-  var message = "Premium Plan: ₹" + plan + "%0A Redeem Code: " + code;
-  var phone = "919607903090"; // Tumhara WhatsApp number
-
-  // Open WhatsApp
-  window.open("https://wa.me/" + phone + "?text=" + message);
-
-  // Prompt user for password after verification
-  setTimeout(() => {
-    var password = prompt("Enter Premium Password (after verification):");
-    if(password === "Rexxo123") { // Apna password
-      document.getElementById("homePage").style.display = "none";
-      document.getElementById("premiumPage").style.display = "none";
-      document.getElementById("secretPage").style.display = "block";
-    } else {
-      alert("Wrong Password!");
-    }
-  }, 500);
+  list.forEach((video,index)=>{
+    videoList.innerHTML += `
+      <div class="video-card">
+        <h4>${video.title}</h4>
+        <iframe src="https://www.youtube.com/embed/${video.id}" frameborder="0" allowfullscreen></iframe>
+        <br>
+        <button class="action-btn like" onclick="likeVideo(${index})">👍 ${video.likes}</button>
+        <button class="action-btn delete" onclick="deleteVideo(${index})">🗑 Delete</button>
+      </div>
+    `;
+  });
 }
+
+// Video actions
+function likeVideo(i){videos[i].likes++; renderVideos();}
+function deleteVideo(i){videos.splice(i,1); renderVideos();}
+
+// Search
+function searchVideos(){
+  let term = document.getElementById("searchInput").value.toLowerCase();
+  let filtered = videos.filter(v=>v.title.toLowerCase().includes(term));
+  renderVideos(filtered);
+}
+
+// Page switch
+function showHome(){
+  document.getElementById("homePage").classList.remove("hidden");
+  document.getElementById("premiumPage").classList.add("hidden");
+  document.getElementById("secretPage").classList.add("hidden");
+}
+function showPremium(){
+  document.getElementById("homePage").classList.add("hidden");
+  document.getElementById("premiumPage").classList.remove("hidden");
+  document.getElementById("secretPage").classList.add("hidden");
+}
+
+// WhatsApp premium system
+function sendWhatsApp(){
+  let plan = document.getElementById("plan").value;
+  let code = document.getElementById("redeemCode").value.trim();
+  if(!code){ alert("Enter Redeem Code"); return;}
+  let message = "Premium Plan: ₹"+plan+"%0A Redeem Code: "+code;
+  let phone = "919607903090"; // Tumhara WhatsApp number
+  window.open("https://wa.me/"+phone+"?text="+message);
+  setTimeout(()=>{
+    let password = prompt("Enter Premium Password (after verification):");
+    if(password==="Rexxo123"){
+      document.getElementById("homePage").classList.add("hidden");
+      document.getElementById("premiumPage").classList.add("hidden");
+      document.getElementById("secretPage").classList.remove("hidden");
+    }else{ alert("Wrong Password!"); }
+  },500);
+}
+
+// Initial render
+renderVideos();
+showHome();
 </script>
 
 </body>
