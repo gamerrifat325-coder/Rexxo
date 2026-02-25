@@ -3,12 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RexxoTube</title>
+
+<meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
+
+<title>RexxoVerse</title>
+
 <style>
 body{margin:0;font-family:Arial;background:#0f0f0f;color:white;}
-header{background:black;padding:12px;display:flex;justify-content:space-between;align-items:center;}
-header input{padding:6px;border-radius:5px;border:none;width:60%;}
-header button{background:#22c55e;border:none;padding:6px 10px;border-radius:5px;color:white;}
+
+header{
+background:black;
+padding:12px;
+display:flex;
+flex-direction:column;
+align-items:flex-start;
+}
+
+.logo{
+font-weight:bold;
+color:white;
+font-size:18px;
+margin-bottom:8px;
+}
+
+.search-row{
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+header input{
+padding:6px;
+border-radius:5px;
+border:none;
+width:60%;
+}
+
+header button{
+background:#22c55e;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+color:white;
+margin-left:8px;
+}
+
 .container{padding:10px;margin-bottom:70px;}
 .hidden{display:none;}
 .video-card{background:#181818;padding:10px;border-radius:8px;margin-bottom:15px;}
@@ -19,28 +59,31 @@ iframe{width:100%;border-radius:8px;}
 .package{background:#181818;padding:15px;border-radius:8px;margin-top:10px;cursor:pointer;}
 .info-btn{background:#2563eb;border:none;border-radius:50%;width:20px;height:20px;color:white;margin-left:5px;}
 .menu-btn{background:none;border:none;color:white;font-size:16px;}
-/* MODALS */
+
 #premiumModal,#reportModal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#222;padding:20px;border-radius:10px;width:80%;max-width:300px;color:white;text-align:center;z-index:1000;}
 #premiumModal button,#reportModal button,#deleteHistoryBtn{margin-top:10px;padding:6px 12px;border:none;border-radius:5px;background:#22c55e;color:white;cursor:pointer;}
 #reportModal input{width:100%;padding:6px;border-radius:5px;border:none;margin-top:10px;}
 #reportModal .closeModal{position:absolute;top:5px;right:10px;font-size:18px;cursor:pointer;}
 </style>
 </head>
+
 <body>
 
 <header>
+<div class="logo">Rexxo Verse</div>
+
+<div class="search-row">
 <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchVideos()">
 <button onclick="switchTab('premiumTab')">Premium</button>
+</div>
 </header>
 
 <div class="container">
 
-<!-- HOME -->
 <div id="homeTab">
 <div id="videoList"></div>
 </div>
 
-<!-- CREATE -->
 <div id="createTab" class="hidden">
 <h3>Add Video</h3>
 <input type="text" id="videoTitle" placeholder="Title"><br><br>
@@ -48,7 +91,6 @@ iframe{width:100%;border-radius:8px;}
 <button onclick="uploadCheck()">Upload</button>
 </div>
 
-<!-- PREMIUM -->
 <div id="premiumTab" class="hidden">
 <h2>Premium</h2>
 <div class="package" onclick="showRedeem()">
@@ -62,7 +104,6 @@ iframe{width:100%;border-radius:8px;}
 </div>
 </div>
 
-<!-- ME -->
 <div id="meTab" class="hidden">
 <h3>Your Videos</h3>
 <div id="yourVideos"></div>
@@ -79,7 +120,6 @@ iframe{width:100%;border-radius:8px;}
 <button onclick="switchTab('meTab')">Me</button>
 </div>
 
-<!-- MODALS -->
 <div id="premiumModal" class="hidden">
 <p>After purchasing Premium:<br>
 - Upload Shorts<br>
@@ -110,10 +150,8 @@ let halfWatch=0;
 let videos=[{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",owner:"Admin",time:Date.now()},{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",owner:"Admin",time:Date.now()}];
 let reportIndex=null;
 
-// ==== HELPER ====
 function timeAgo(t){let h=Math.floor((Date.now()-t)/3600000);return h<=1?"Just now":h+" hours ago";}
 
-// ==== VIDEO RENDER ====
 function renderVideos(list=videos){
 let box=document.getElementById("videoList");box.innerHTML="";
 list.forEach((v,i)=>{
@@ -129,53 +167,44 @@ box.innerHTML+=`<div class="video-card">
 });
 }
 
-// ==== MENU FOR REPORT/BLOCK ====
 function openReportModal(i){reportIndex=i;document.getElementById("reportModal").classList.remove("hidden");}
 function closeReportModal(){document.getElementById("reportModal").classList.add("hidden");document.getElementById("reportReason").value="";}
 function submitReport(){let reason=document.getElementById("reportReason").value;if(!reason)return alert("Enter a reason");alert(`Report submitted for ${videos[reportIndex].owner}:\n${reason}`);closeReportModal();}
 
-// ==== VIDEO ACTIONS ====
 function deleteVideo(i){videos.splice(i,1);renderVideos();renderMe();}
 function uploadCheck(){if(user.premium)addVideo();else alert("Premium Only");}
 function addVideo(){let title=document.getElementById("videoTitle").value;let link=document.getElementById("videoLink").value;let id=link.split("v=")[1]||link.split("youtu.be/")[1];if(!title||!id)return alert("Enter valid details");videos.push({title,id,owner:user.name,time:Date.now()});renderVideos();renderMe();}
 
-// ==== SEARCH ====
 function searchVideos(){let term=document.getElementById("searchInput").value.toLowerCase();if(term)searchHistory.push(term);renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));}
 
-// ==== TABS ====
 function switchTab(id){["homeTab","createTab","premiumTab","meTab"].forEach(t=>document.getElementById(t).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="meTab") renderMe();}
 
-// ==== PREMIUM ====
 function showInfo(e){e.stopPropagation();document.getElementById("premiumModal").classList.remove("hidden");}
 function closePremiumModal(){document.getElementById("premiumModal").classList.add("hidden");}
 function showRedeem(){document.getElementById("redeemBox").classList.remove("hidden");}
 function submitRedeem(){let code=document.getElementById("redeemCode").value;if(!code)return alert("Enter Code");let phone="919607903090";let msg=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);window.open("https://wa.me/"+phone+"?text="+msg,"_blank");user.premium=true;localStorage.setItem("userPremium","true");alert("Premium Activated!");}
 
-// ==== ME TAB ====
 function renderMe(){
 let your=videos.filter(v=>v.owner===user.name);
 let yBox=document.getElementById("yourVideos");yBox.innerHTML="";
 your.forEach((v,i)=>{yBox.innerHTML+=`<div style="background:#222;padding:8px;margin-bottom:8px;display:flex;justify-content:space-between;">
 ${v.title}
 <button class="menu-btn" onclick="editOrDeleteVideo(${i})">⋮</button></div>`;});
-
 document.getElementById("historyData").innerHTML="Searches: "+(searchHistory.join(", ")||"None")+"<br>"+
 "Videos Watched: "+watchCount+"<br>"+
 "Half Watched: "+halfWatch;
 }
 
-// ==== EDIT/DELETE MENU FOR YOUR VIDEOS ====
 function editOrDeleteVideo(i){
 let choice=prompt("1: Edit Title\n2: Delete Video");
 if(choice=="1"){let newTitle=prompt("Edit Title:",videos[i].title);if(newTitle)videos[i].title=newTitle;renderVideos();renderMe();}
 else if(choice=="2"){deleteVideo(i);}
 }
 
-// ==== DELETE ALL HISTORY ====
 function deleteAllHistory(){searchHistory=[];watchCount=0;halfWatch=0;renderMe();alert("History Cleared");}
 
-// ==== INITIAL LOAD ====
 renderVideos();
 </script>
+
 </body>
 </html>
