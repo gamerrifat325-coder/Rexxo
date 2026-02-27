@@ -3,207 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
-
-<title>RexxoVerse</title>
+<title>Rexxo Verse</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0f0f0f;color:white;}
+body{margin:0;background:#0f0f0f;color:white;font-family:Arial}
+header{background:black;padding:12px;font-weight:bold}
+.container{padding:10px;margin-bottom:60px}
+.video{background:#181818;padding:10px;border-radius:8px;margin-bottom:20px}
 
-header{
-background:black;
-padding:12px;
-display:flex;
-flex-direction:column;
-align-items:flex-start;
-}
-
-.logo{
-font-weight:bold;
-color:white;
-font-size:18px;
-margin-bottom:8px;
-}
-
-.search-row{
+/* VIDEO SIZE SAME */
+iframe{
 width:100%;
-display:flex;
-justify-content:center;
-align-items:center;
+height:220px;
+border-radius:8px;
+border:none
 }
 
-header input{
-padding:6px;
-border-radius:5px;
-border:none;
-width:60%;
+.bottom{position:fixed;bottom:0;width:100%;background:black;display:flex;justify-content:space-around;padding:10px 0}
+button{background:none;color:white;border:none}
+.hidden{display:none}
+
+/* PREMIUM STYLE */
+.package{
+background:#181818;
+padding:15px;
+border-radius:8px;
+margin-top:10px;
+cursor:pointer;
 }
 
-header button{
-background:#22c55e;
+.info-btn{
+background:#2563eb;
 border:none;
-padding:6px 10px;
-border-radius:5px;
+border-radius:50%;
+width:20px;
+height:20px;
 color:white;
-margin-left:8px;
+margin-left:5px;
 }
 
-.container{padding:10px;margin-bottom:70px;}
-.hidden{display:none;}
-.video-card{background:#181818;padding:10px;border-radius:8px;margin-bottom:15px;}
-iframe{width:100%;border-radius:8px;}
-.profile-mini{width:30px;height:30px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;margin-right:8px;font-size:14px;}
-.bottom-nav{position:fixed;bottom:0;width:100%;background:black;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222;}
-.bottom-nav button{background:none;color:white;border:none;}
-.package{background:#181818;padding:15px;border-radius:8px;margin-top:10px;cursor:pointer;}
-.info-btn{background:#2563eb;border:none;border-radius:50%;width:20px;height:20px;color:white;margin-left:5px;}
-.menu-btn{background:none;border:none;color:white;font-size:16px;}
+#premiumModal{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#222;
+padding:20px;
+border-radius:10px;
+width:80%;
+max-width:300px;
+color:white;
+text-align:center;
+z-index:1000;
+}
 
-#premiumModal,#reportModal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#222;padding:20px;border-radius:10px;width:80%;max-width:300px;color:white;text-align:center;z-index:1000;}
-#premiumModal button,#reportModal button,#deleteHistoryBtn{margin-top:10px;padding:6px 12px;border:none;border-radius:5px;background:#22c55e;color:white;cursor:pointer;}
-#reportModal input{width:100%;padding:6px;border-radius:5px;border:none;margin-top:10px;}
-#reportModal .closeModal{position:absolute;top:5px;right:10px;font-size:18px;cursor:pointer;}
+#premiumModal button{
+margin-top:10px;
+padding:6px 12px;
+border:none;
+border-radius:5px;
+background:#22c55e;
+color:white;
+cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<header>
-<div class="logo">Rexxo Verse</div>
-
-<div class="search-row">
-<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchVideos()">
-<button onclick="switchTab('premiumTab')">Premium</button>
-</div>
-</header>
+<header>Rexxo Verse</header>
 
 <div class="container">
 
-<div id="homeTab">
-<div id="videoList"></div>
+<div id="home">
+<div class="video"><iframe src="https://www.youtube.com/embed/_kILtG5-2O0?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/8dlctkeNeYI?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/_9f6WVIoPsM?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/IJn94KJ8VO0?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/nBmnZV5y6rk?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/xxK7X6d6TL8?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/p2WTOtLvkyI?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/Mid4BbMYijg?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/y2hDNlkTo1c?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/KnZklF1tTjo?playsinline=1" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/k5w5qkZ2Te8?playsinline=1" allowfullscreen></iframe></div>
 </div>
 
-<div id="createTab" class="hidden">
-<h3>Add Video</h3>
-<input type="text" id="videoTitle" placeholder="Title"><br><br>
-<input type="text" id="videoLink" placeholder="YouTube Link"><br><br>
-<button onclick="uploadCheck()">Upload</button>
-</div>
-
-<div id="premiumTab" class="hidden">
+<!-- PREMIUM TAB -->
+<div id="premium" class="hidden">
 <h2>Premium</h2>
+
 <div class="package" onclick="showRedeem()">
 ₹50 Package
 <button class="info-btn" onclick="showInfo(event)">?</button>
 </div>
+
 <div id="redeemBox" class="hidden">
 <br>
-<input type="text" id="redeemCode" placeholder="Enter Redeem Code">
-<button onclick="submitRedeem()">Submit</button>
-</div>
-</div>
-
-<div id="meTab" class="hidden">
-<h3>Your Videos</h3>
-<div id="yourVideos"></div>
-
-<h3>History <button id="deleteHistoryBtn" onclick="deleteAllHistory()">Delete All History</button></h3>
-<div id="historyData"></div>
+<input type="text" id="redeemCode" placeholder="Enter Redeem Code" style="padding:6px;border-radius:5px;border:none;width:70%;">
+<button onclick="submitRedeem()" style="background:#22c55e;padding:6px 10px;border-radius:5px;border:none;color:white;">Submit</button>
 </div>
 
 </div>
 
-<div class="bottom-nav">
-<button onclick="switchTab('homeTab')">Home</button>
-<button onclick="switchTab('createTab')">Create</button>
-<button onclick="switchTab('meTab')">Me</button>
+<div id="me" class="hidden">
+<h3>@rexxo_007</h3>
+<p>All Shorts from YouTube</p>
 </div>
 
+</div>
+
+<div class="bottom">
+<button onclick="show('home')">Home</button>
+<button onclick="show('premium')">Premium</button>
+<button onclick="show('me')">Me</button>
+</div>
+
+<!-- PREMIUM MODAL -->
 <div id="premiumModal" class="hidden">
 <p>After purchasing Premium:<br>
 - Upload Shorts<br>
 - Edit Bio<br>
-- Exclusive Features to increase followers/views<br>
+- Exclusive Features<br>
 - Unlock Me tab insights</p>
 <button onclick="closePremiumModal()">OK</button>
 </div>
 
-<div id="reportModal" class="hidden">
-<span class="closeModal" onclick="closeReportModal()">×</span>
-<p>Write your report:</p>
-<input type="text" id="reportReason" placeholder="Reason">
-<button onclick="submitReport()">Submit</button>
-</div>
-
 <script>
-// ==== USER LOGIN ====
-let user={name: localStorage.getItem("userName")||"",dob: localStorage.getItem("userDOB")||"",premium: localStorage.getItem("userPremium")==="true"};
-if(!user.name){user.name=prompt("Enter Name:")||"Guest";user.dob=prompt("Enter DOB (DD/MM/YYYY)")||"";localStorage.setItem("userName",user.name);localStorage.setItem("userDOB",user.dob);}
-
-// ==== HISTORY & TRACKING ====
-let searchHistory=[];
-let watchCount=0;
-let halfWatch=0;
-
-// ==== VIDEO DATA ====
-let videos=[{title:"Rexxo Gameplay 1",id:"dQw4w9WgXcQ",owner:"Admin",time:Date.now()},{title:"Rexxo Gameplay 2",id:"9bZkp7q19f0",owner:"Admin",time:Date.now()}];
-let reportIndex=null;
-
-function timeAgo(t){let h=Math.floor((Date.now()-t)/3600000);return h<=1?"Just now":h+" hours ago";}
-
-function renderVideos(list=videos){
-let box=document.getElementById("videoList");box.innerHTML="";
-list.forEach((v,i)=>{
-let controls="";
-if(v.owner===user.name){controls=`<button onclick="deleteVideo(${i})">Delete</button>`;}else{controls=`<button class="menu-btn" onclick="openReportModal(${i})">⋮</button>`;}
-box.innerHTML+=`<div class="video-card">
-<div style="display:flex;justify-content:space-between;">
-<h4>${v.title}</h4>${controls}</div>
-<iframe src="https://www.youtube.com/embed/${v.id}" allowfullscreen onclick="watchCount++"></iframe>
-<div style="display:flex;align-items:center;margin-top:5px;">
-<div class="profile-mini">${v.owner.charAt(0).toUpperCase()}</div>
-<span>${v.owner} • ${timeAgo(v.time)}</span></div></div>`;
-});
+function show(id){
+document.getElementById('home').classList.add('hidden');
+document.getElementById('premium').classList.add('hidden');
+document.getElementById('me').classList.add('hidden');
+document.getElementById(id).classList.remove('hidden');
 }
 
-function openReportModal(i){reportIndex=i;document.getElementById("reportModal").classList.remove("hidden");}
-function closeReportModal(){document.getElementById("reportModal").classList.add("hidden");document.getElementById("reportReason").value="";}
-function submitReport(){let reason=document.getElementById("reportReason").value;if(!reason)return alert("Enter a reason");alert(`Report submitted for ${videos[reportIndex].owner}:\n${reason}`);closeReportModal();}
-
-function deleteVideo(i){videos.splice(i,1);renderVideos();renderMe();}
-function uploadCheck(){if(user.premium)addVideo();else alert("Premium Only");}
-function addVideo(){let title=document.getElementById("videoTitle").value;let link=document.getElementById("videoLink").value;let id=link.split("v=")[1]||link.split("youtu.be/")[1];if(!title||!id)return alert("Enter valid details");videos.push({title,id,owner:user.name,time:Date.now()});renderVideos();renderMe();}
-
-function searchVideos(){let term=document.getElementById("searchInput").value.toLowerCase();if(term)searchHistory.push(term);renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));}
-
-function switchTab(id){["homeTab","createTab","premiumTab","meTab"].forEach(t=>document.getElementById(t).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="meTab") renderMe();}
-
-function showInfo(e){e.stopPropagation();document.getElementById("premiumModal").classList.remove("hidden");}
-function closePremiumModal(){document.getElementById("premiumModal").classList.add("hidden");}
-function showRedeem(){document.getElementById("redeemBox").classList.remove("hidden");}
-function submitRedeem(){let code=document.getElementById("redeemCode").value;if(!code)return alert("Enter Code");let phone="919607903090";let msg=encodeURIComponent("Premium Redeem Request\nCode: "+code+"\nUser: "+user.name);window.open("https://wa.me/"+phone+"?text="+msg,"_blank");user.premium=true;localStorage.setItem("userPremium","true");alert("Premium Activated!");}
-
-function renderMe(){
-let your=videos.filter(v=>v.owner===user.name);
-let yBox=document.getElementById("yourVideos");yBox.innerHTML="";
-your.forEach((v,i)=>{yBox.innerHTML+=`<div style="background:#222;padding:8px;margin-bottom:8px;display:flex;justify-content:space-between;">
-${v.title}
-<button class="menu-btn" onclick="editOrDeleteVideo(${i})">⋮</button></div>`;});
-document.getElementById("historyData").innerHTML="Searches: "+(searchHistory.join(", ")||"None")+"<br>"+
-"Videos Watched: "+watchCount+"<br>"+
-"Half Watched: "+halfWatch;
+/* PREMIUM JS */
+function showInfo(e){
+e.stopPropagation();
+document.getElementById("premiumModal").classList.remove("hidden");
 }
 
-function editOrDeleteVideo(i){
-let choice=prompt("1: Edit Title\n2: Delete Video");
-if(choice=="1"){let newTitle=prompt("Edit Title:",videos[i].title);if(newTitle)videos[i].title=newTitle;renderVideos();renderMe();}
-else if(choice=="2"){deleteVideo(i);}
+function closePremiumModal(){
+document.getElementById("premiumModal").classList.add("hidden");
 }
 
-function deleteAllHistory(){searchHistory=[];watchCount=0;halfWatch=0;renderMe();alert("History Cleared");}
+function showRedeem(){
+document.getElementById("redeemBox").classList.remove("hidden");
+}
 
-renderVideos();
+function submitRedeem(){
+let code=document.getElementById("redeemCode").value;
+if(!code) return alert("Enter Code");
+
+let phone="919607903090";
+let msg=encodeURIComponent("Premium Redeem Request\nCode: "+code);
+window.open("https://wa.me/"+phone+"?text="+msg,"_blank");
+
+localStorage.setItem("userPremium","true");
+alert("Premium Activated!");
+}
 </script>
 
 </body>
