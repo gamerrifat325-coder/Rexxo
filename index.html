@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Site Verification -->
+<meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
 <title>Rexxo Verse</title>
 
 <style>
@@ -100,7 +102,10 @@ cursor:pointer;
 
 <div id="redeemBox" class="hidden">
 <br>
-<input type="text" id="redeemCode" placeholder="Enter Redeem Code" style="padding:6px;border-radius:5px;border:none;width:70%;">
+<input type="text" id="redeemCode" placeholder="Enter Redeem Code" 
+       maxlength="20"
+       oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9 ]/g,'')"
+       style="padding:6px;border-radius:5px;border:none;width:70%;text-transform:uppercase;">
 <button onclick="submitRedeem()" style="background:#22c55e;padding:6px 10px;border-radius:5px;border:none;color:white;">Submit</button>
 </div>
 
@@ -137,7 +142,6 @@ document.getElementById('me').classList.add('hidden');
 document.getElementById(id).classList.remove('hidden');
 }
 
-/* PREMIUM JS */
 function showInfo(e){
 e.stopPropagation();
 document.getElementById("premiumModal").classList.remove("hidden");
@@ -152,11 +156,11 @@ document.getElementById("redeemBox").classList.remove("hidden");
 }
 
 function submitRedeem(){
-let code=document.getElementById("redeemCode").value;
+let code=document.getElementById("redeemCode").value.trim();
 if(!code) return alert("Enter Code");
 
 let phone="919607903090";
-let msg=encodeURIComponent("Premium Redeem Request\nCode: "+code);
+let msg=encodeURIComponent("Premium Redeem Request\nCODE: "+code.toUpperCase());
 window.open("https://wa.me/"+phone+"?text="+msg,"_blank");
 
 localStorage.setItem("userPremium","true");
