@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Google Site Verification -->
 <meta name="google-site-verification" content="IXp8EtdnajyjawoHcwetfqByzOUobObm69_VRGP20EM" />
 <title>Rexxo Verse</title>
 
@@ -13,7 +12,6 @@ header{background:black;padding:12px;font-weight:bold}
 .container{padding:10px;margin-bottom:60px}
 .video{background:#181818;padding:10px;border-radius:8px;margin-bottom:20px}
 
-/* VIDEO SIZE SAME */
 iframe{
 width:100%;
 height:220px;
@@ -25,7 +23,6 @@ border:none
 button{background:none;color:white;border:none}
 .hidden{display:none}
 
-/* PREMIUM STYLE */
 .package{
 background:#181818;
 padding:15px;
@@ -42,6 +39,7 @@ width:20px;
 height:20px;
 color:white;
 margin-left:5px;
+font-size:12px;
 }
 
 #premiumModal{
@@ -52,15 +50,15 @@ transform:translate(-50%,-50%);
 background:#222;
 padding:20px;
 border-radius:10px;
-width:80%;
-max-width:300px;
+width:90%;
+max-width:340px;
 color:white;
-text-align:center;
+text-align:left;
 z-index:1000;
 }
 
 #premiumModal button{
-margin-top:10px;
+margin-top:15px;
 padding:6px 12px;
 border:none;
 border-radius:5px;
@@ -77,27 +75,28 @@ cursor:pointer;
 
 <div class="container">
 
+<!-- HOME WITH YOUR SHORTS -->
 <div id="home">
-<div class="video"><iframe src="https://www.youtube.com/embed/_kILtG5-2O0?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/8dlctkeNeYI?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/_9f6WVIoPsM?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/IJn94KJ8VO0?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/nBmnZV5y6rk?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/xxK7X6d6TL8?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/p2WTOtLvkyI?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/Mid4BbMYijg?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/y2hDNlkTo1c?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/KnZklF1tTjo?playsinline=1" allowfullscreen></iframe></div>
-<div class="video"><iframe src="https://www.youtube.com/embed/k5w5qkZ2Te8?playsinline=1" allowfullscreen></iframe></div>
+
+<div class="video"><iframe src="https://www.youtube.com/embed/_kILtG5-2O0" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/IJn94KJ8VO0" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/nBmnZV5y6rk" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/xxK7X6d6TL8" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/p2WTOtLvkyI" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/Mid4BbMYijg" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/y2hDNlkTo1c" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/KnZklF1tTjo" allowfullscreen></iframe></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/k5w5qkZ2Te8" allowfullscreen></iframe></div>
+
 </div>
 
-<!-- PREMIUM TAB -->
+<!-- PREMIUM TAB (UNCHANGED) -->
 <div id="premium" class="hidden">
 <h2>Premium</h2>
 
 <div class="package" onclick="showRedeem()">
 ₹50 Package
-<button class="info-btn" onclick="showInfo(event)">?</button>
+<button class="info-btn" onclick="showInfo(event)">i</button>
 </div>
 
 <div id="redeemBox" class="hidden">
@@ -124,13 +123,19 @@ cursor:pointer;
 <button onclick="show('me')">Me</button>
 </div>
 
-<!-- PREMIUM MODAL -->
+<!-- PREMIUM MODAL (UNCHANGED) -->
 <div id="premiumModal" class="hidden">
-<p>After purchasing Premium:<br>
-- Upload Shorts<br>
-- Edit Bio<br>
-- Exclusive Features<br>
-- Unlock Me tab insights</p>
+<p>
+If you purchase Premium, your video will also appear here. 
+With one Premium purchase, you can display 3 videos at a time for 20 days.
+<br><br>
+<b>How?</b><br>
+You just need to enter a redeem code. 
+The redeem code will be checked. If it is real, you will receive a "Done" message. 
+After that, you will get a message to send your videos. 
+Send 3 videos, and within 2–3 hours they will appear on the website. 
+Enter the redeem code here and you will be redirected to WhatsApp.
+</p>
 <button onclick="closePremiumModal()">OK</button>
 </div>
 
